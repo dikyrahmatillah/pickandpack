@@ -1,0 +1,36 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0f9ff"/>
+      <stop offset="100%" style="stop-color:#e0f2fe"/>
+    </linearGradient>
+    <linearGradient id="teaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#92400e"/>
+      <stop offset="100%" style="stop-color:#451a03"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="400" fill="url(#bgGradient)"/>
+  
+  <!-- Tea Cup -->
+  <ellipse cx="200" cy="280" rx="80" ry="15" fill="#d1d5db" opacity="0.3"/>
+  <path d="M140 180 Q140 160 160 160 L240 160 Q260 160 260 180 L250 250 Q250 270 230 270 L170 270 Q150 270 150 250 Z" fill="white" stroke="#d1d5db" stroke-width="2"/>
+  
+  <!-- Tea -->
+  <path d="M145 185 Q145 175 155 175 L235 175 Q245 175 245 185 L238 240 Q238 250 228 250 L172 250 Q162 250 162 240 Z" fill="url(#teaGradient)"/>
+  
+  <!-- Handle -->
+  <path d="M260 190 Q280 190 280 210 Q280 230 260 230" fill="none" stroke="#d1d5db" stroke-width="3"/>
+  
+  <!-- Steam -->
+  <path d="M170 160 Q170 140 175 140 Q180 160 185 140 Q190 160 195 140" fill="none" stroke="#10b981" stroke-width="2" opacity="0.6"/>
+  <path d="M200 155 Q200 135 205 135 Q210 155 215 135 Q220 155 225 135" fill="none" stroke="#10b981" stroke-width="2" opacity="0.4"/>
+  
+  <!-- Tea Leaf -->
+  <ellipse cx="330" cy="100" rx="25" ry="12" fill="#16a34a" transform="rotate(30 330 100)"/>
+  <path d="M320 100 Q330 85 340 100" fill="none" stroke="#15803d" stroke-width="2"/>
+  
+  <!-- Text -->
+  <text x="200" y="350" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#374151">Tea Flow</text>
+</svg>

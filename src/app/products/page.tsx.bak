@@ -1,0 +1,193 @@
+import Image from "next/image";
+import Link from "next/link";
+
+export default function ProductsPage() {
+  const products = [
+    {
+      id: 1,
+      name: "GREEN TEA #2",
+      flavor: "flowery with slight bitterness",
+      price: 27,
+      category: "Green Tea",
+      image:
+        "https://cdn.prod.website-files.com/6765d66f89f7f0b8ec8065e0/6765d66f89f7f0b8ec806669_featured-p-500.jpeg",
+    },
+    {
+      id: 2,
+      name: "SHU PU-ERH #2",
+      flavor: "sweet, woody, nutty, chocolate",
+      price: 15,
+      category: "Pu-erh Tea",
+      image: "/tea-placeholder.svg",
+    },
+    {
+      id: 3,
+      name: "BLACK TEA #1",
+      flavor: "soft, nutty, with fresh notes",
+      price: 21,
+      category: "Black Tea",
+      image: "/tea-placeholder.svg",
+    },
+    {
+      id: 4,
+      name: "GREEN TEA #1",
+      flavor: "cucumbers, young shoots, mushrooms",
+      price: 12,
+      category: "Green Tea",
+      image: "/tea-placeholder.svg",
+    },
+    {
+      id: 5,
+      name: "BLACK TEA #3",
+      flavor: "spicy, sweet, pleasant bitterness",
+      price: 15,
+      category: "Black Tea",
+      image: "/tea-placeholder.svg",
+    },
+    {
+      id: 6,
+      name: "SHU PU-ERH #14",
+      flavor: "berry with nutty chocolate",
+      price: 14,
+      category: "Pu-erh Tea",
+      image: "/tea-placeholder.svg",
+    },
+    {
+      id: 7,
+      name: "WHITE TEA #1",
+      flavor: "delicate, sweet, floral",
+      price: 32,
+      category: "White Tea",
+      image: "/tea-placeholder.svg",
+    },
+    {
+      id: 8,
+      name: "OOLONG TEA #1",
+      flavor: "fruity, complex, aromatic",
+      price: 24,
+      category: "Oolong Tea",
+      image: "/tea-placeholder.svg",
+    },
+  ];
+
+  const categories = [
+    "All",
+    "Green Tea",
+    "Black Tea",
+    "Pu-erh Tea",
+    "White Tea",
+    "Oolong Tea",
+    "Red Tea",
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-green-600 to-green-800 text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6">
+            Our Premium Tea Collection
+          </h1>
+          <p className="text-xl md:text-2xl text-green-100 max-w-3xl mx-auto">
+            Discover the finest selection of teas from around the world,
+            carefully curated for the ultimate tea experience.
+          </p>
+        </div>
+      </section>
+
+      {/* Category Filter */}
+      <section className="py-8 bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap justify-center gap-4">
+            {categories.map((category) => (
+              <button
+                key={category}
+                className="px-6 py-3 rounded-full border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-colors font-medium"
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Products Grid */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <div className="relative h-64">
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    className={
+                      product.image.includes("placeholder")
+                        ? "object-contain p-4"
+                        : "object-cover"
+                    }
+                  />
+                  <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {product.category}
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    {product.name}
+                  </h3>
+
+                  <p className="text-gray-600 mb-4">Flavor: {product.flavor}</p>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl font-bold text-green-600">
+                      ${product.price}
+                    </span>
+                    <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium transition-colors">
+                      Add to Cart
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-green-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Can&apos;t find what you&apos;re looking for?
+          </h2>
+          <p className="text-xl text-gray-600 mb-8">
+            Contact our tea experts for personalized recommendations
+          </p>
+          <Link
+            href="/contacts"
+            className="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-md font-medium text-lg transition-colors"
+          >
+            Contact Us
+            <svg
+              className="w-5 h-5 ml-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+}
