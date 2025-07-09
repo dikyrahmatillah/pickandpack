@@ -71,7 +71,7 @@ export default function ProductDetailPage({
           </Link>
           <h1 className="text-[100px] font-bold m-0">{product.name}</h1>
           <div className="mt-6 mb-2 text-gray-500 text-xl">Model:</div>
-          <div className="text-2xl mb-6">{product.model}</div>
+          <div className="text-2xl mb-6">{product.name.toUpperCase()}</div>
           <div className="text-gray-500 text-xl mb-2">Cocok Untuk:</div>
           <div className="text-2xl mb-6">{product.utility}</div>
           <div className="text-gray-500 text-xl mb-2">Deskripsi:</div>

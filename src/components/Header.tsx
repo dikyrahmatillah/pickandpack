@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export default function Header() {
+  const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
   const lastScroll = useRef(0);
@@ -99,12 +101,25 @@ export default function Header() {
               >
                 contact
               </Link>
-              <Link
-                href="/login"
-                className="uppercase text-gray-900 hover:text-gray-700 text-lg font-semibold tracking-wide"
-              >
-                Login
-              </Link>
+              {session?.user ? (
+                <Link
+                  href={
+                    session.user.role === "viewer"
+                      ? "/dashboard/viewer"
+                      : "/dashboard"
+                  }
+                  className="uppercase text-gray-900 hover:text-gray-700 text-lg font-semibold tracking-wide"
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  className="uppercase text-gray-900 hover:text-gray-700 text-lg font-semibold tracking-wide"
+                >
+                  Login
+                </Link>
+              )}
             </div>
             {/* Hamburger or Close */}
             <button
@@ -204,13 +219,23 @@ export default function Header() {
           >
             Contact
           </Link>
-          <Link
-            href="/portfolio"
-            className="text-3xl sm:text-4xl md:text-7xl font-extrabold uppercase text-gray-900 hover:text-indigo-600 transition-colors"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Login
-          </Link>
+          {session?.user ? (
+            <Link
+              href="/dashboard"
+              className="text-3xl sm:text-4xl md:text-7xl font-extrabold uppercase text-gray-900 hover:text-indigo-600 transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="text-3xl sm:text-4xl md:text-7xl font-extrabold uppercase text-gray-900 hover:text-indigo-600 transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Login
+            </Link>
+          )}
         </nav>
 
         {/* Additional Info Links at the bottom */}

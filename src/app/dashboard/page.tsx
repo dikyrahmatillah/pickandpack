@@ -2,17 +2,25 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import { RoleGuard } from "@/components/auth/RoleGuard";
-import Link from "next/link";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalJournals: 0,
     totalUsers: 0,
   });
+
+  // Redirect viewers to their specialized dashboard
+  useEffect(() => {
+    if (session?.user?.role === "viewer") {
+      router.push("/dashboard/viewer");
+    }
+  }, [session, router]);
 
   // In a real app, you would fetch actual stats from your API
   useEffect(() => {
@@ -31,7 +39,7 @@ export default function DashboardPage() {
 
   return (
     <RoleGuard>
-      <div className="flex min-h-screen bg-gray-50">
+      <main className="px-4 sm:px-8 md:px-28 py-8 pt-30 md:pt-50">
         <DashboardSidebar />
 
         <div className="flex-1 ml-64 p-8">
@@ -40,6 +48,46 @@ export default function DashboardPage() {
             <p className="text-gray-600">
               Welcome back, {session?.user?.name}!
             </p>
+          </div>
+
+          {/* Role-based Welcome Section */}
+          <div className="mb-8">
+            {session?.user?.role === "admin" && (
+              <div className="bg-white border-l-4 border-indigo-500 p-4 mb-4 shadow-sm">
+                <h3 className="text-lg font-medium text-indigo-800 mb-1">
+                  Admin Dashboard
+                </h3>
+                <p className="text-gray-600">
+                  You have full access to manage products, journals, and user
+                  accounts. Use the quick actions below or navigate using the
+                  sidebar.
+                </p>
+              </div>
+            )}
+
+            {session?.user?.role === "editor" && (
+              <div className="bg-white border-l-4 border-green-500 p-4 mb-4 shadow-sm">
+                <h3 className="text-lg font-medium text-green-800 mb-1">
+                  Editor Dashboard
+                </h3>
+                <p className="text-gray-600">
+                  You can create and edit content including journals and
+                  products. Use the quick actions below to get started.
+                </p>
+              </div>
+            )}
+
+            {session?.user?.role === "viewer" && (
+              <div className="bg-white border-l-4 border-blue-500 p-4 mb-4 shadow-sm">
+                <h3 className="text-lg font-medium text-blue-800 mb-1">
+                  Viewer Dashboard
+                </h3>
+                <p className="text-gray-600">
+                  Welcome to your dashboard! You can view journals and products,
+                  but cannot edit content. Check out the latest updates below.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Stats Cards */}
@@ -129,94 +177,6 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* Quick Actions */}
-          <section className="mb-10">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Quick Actions
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {(session?.user?.role === "admin" ||
-                session?.user?.role === "editor") && (
-                <>
-                  <Link
-                    href="/dashboard/create-journal"
-                    className="block p-4 bg-white border border-gray-200 rounded-none hover:bg-gray-50"
-                  >
-                    <div className="flex items-center">
-                      <div className="p-2 bg-green-100 rounded-full mr-3">
-                        <svg
-                          className="w-5 h-5 text-green-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                          />
-                        </svg>
-                      </div>
-                      <span>Create New Journal</span>
-                    </div>
-                  </Link>
-
-                  <Link
-                    href="/dashboard/products/new"
-                    className="block p-4 bg-white border border-gray-200 rounded-none hover:bg-gray-50"
-                  >
-                    <div className="flex items-center">
-                      <div className="p-2 bg-blue-100 rounded-full mr-3">
-                        <svg
-                          className="w-5 h-5 text-blue-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                          />
-                        </svg>
-                      </div>
-                      <span>Add New Product</span>
-                    </div>
-                  </Link>
-                </>
-              )}
-
-              <Link
-                href="/dashboard/profile"
-                className="block p-4 bg-white border border-gray-200 rounded-none hover:bg-gray-50"
-              >
-                <div className="flex items-center">
-                  <div className="p-2 bg-gray-100 rounded-full mr-3">
-                    <svg
-                      className="w-5 h-5 text-gray-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                  </div>
-                  <span>Edit Profile</span>
-                </div>
-              </Link>
-            </div>
-          </section>
-
           {/* Recent Activity (this would be dynamic in a real app) */}
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -302,11 +262,65 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 </li>
+                {/* New Activity 1 */}
+                <li className="p-4">
+                  <div className="flex items-center">
+                    <div className="p-2 bg-yellow-100 rounded-full mr-3">
+                      <svg
+                        className="w-5 h-5 text-yellow-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        Product Inventory Updated
+                      </p>
+                      <p className="text-sm text-gray-500">5 hours ago</p>
+                    </div>
+                  </div>
+                </li>
+                {/* New Activity 2 */}
+                <li className="p-4">
+                  <div className="flex items-center">
+                    <div className="p-2 bg-red-100 rounded-full mr-3">
+                      <svg
+                        className="w-5 h-5 text-red-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 16l4-4m0 0l-4-4m4 4H7"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        User Account Deactivated
+                      </p>
+                      <p className="text-sm text-gray-500">2 days ago</p>
+                    </div>
+                  </div>
+                </li>
               </ul>
             </div>
           </section>
         </div>
-      </div>
+      </main>
     </RoleGuard>
   );
 }

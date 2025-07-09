@@ -7,6 +7,7 @@ import Image from "next/image";
 
 export default function DashboardSidebar() {
   const { data: session } = useSession();
+  console.log("Session in DashboardSidebar:", session?.user.role);
 
   if (!session) {
     return null;
@@ -151,6 +152,29 @@ export default function DashboardSidebar() {
                     />
                   </svg>
                   Products
+                </Link>
+              </li>
+              {/* NEW: Add New Product and New Journal links for admin/editor */}
+              <li>
+                <Link
+                  href="/dashboard/create-product"
+                  className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-none"
+                >
+                  <svg
+                    className="w-5 h-5 mr-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
+                  </svg>
+                  New Product
                 </Link>
               </li>
             </>
