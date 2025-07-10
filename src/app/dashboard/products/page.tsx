@@ -4,51 +4,120 @@ import { useSession } from "next-auth/react";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import { RoleGuard } from "@/components/auth/RoleGuard";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import React from "react";
+
+type Product = {
+  objectId: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  images?: string;
+  slug?: string;
+  utility?: string;
+};
+
+const categories = [
+  { value: "", label: "All Categories" },
+  { value: "Makanan", label: "Makanan" },
+  { value: "Minuman", label: "Minuman" },
+  { value: "Pengiriman", label: "Pengiriman" },
+];
+
+const sortOptions = [
+  { value: "newest", label: "Newest First" },
+  { value: "oldest", label: "Oldest First" },
+  { value: "name-asc", label: "Name: A to Z" },
+  { value: "name-desc", label: "Name: Z to A" },
+];
 
 export default function ProductsPage() {
   const { data: session } = useSession();
-  const products = [
-    {
-      id: 1,
-      name: "Premium Tea Box",
-      description:
-        "Elegant packaging solution for premium tea brands. Sustainable materials with custom printing options.",
-      price: 12.99,
-      category: "Packaging",
-      imageUrl: "/public/images/products/burger-box-1.webp",
-    },
-    {
-      id: 2,
-      name: "Eco Food Container",
-      description:
-        "Environmentally friendly food containers made from biodegradable materials. Perfect for takeout meals.",
-      price: 8.5,
-      category: "Containers",
-      imageUrl: "/public/images/products/burger-box-2.webp",
-    },
-    {
-      id: 3,
-      name: "Drink Cup Set",
-      description:
-        "High-quality paper cups for hot and cold beverages. Available in multiple sizes with custom branding options.",
-      price: 15.99,
-      category: "Cups",
-      imageUrl: "/public/images/products/coaster-1.webp",
-    },
-    {
-      id: 4,
-      name: "Food Delivery Bag",
-      description:
-        "Insulated food delivery bags that keep food warm and secure during transport. Ideal for delivery services.",
-      price: 9.99,
-      category: "Bags",
-      imageUrl: "/public/images/products/food-bag.webp",
-    },
-  ];
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [category, setCategory] = useState("");
+  const [sort, setSort] = useState("newest");
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const pageSize = 8;
 
   const isAdmin = session?.user?.role === "admin";
   const isEditor =
     session?.user?.role === "admin" || session?.user?.role === "editor";
+
+  useEffect(() => {
+    setOffset(0);
+    fetchProducts(0, true);
+    // eslint-disable-next-line
+  }, [category, sort]);
+
+  const fetchProducts = async (start: number, reset = false) => {
+    setLoading(true);
+    let url = `https://headwheel-us.backendless.app/api/data/products?pageSize=${pageSize}&offset=${start}`;
+    if (category) {
+      url += `&where=category%3D'${encodeURIComponent(category)}'`;
+    }
+    // Sorting logic (client-side for demo, Backendless supports order by for simple fields)
+    if (sort === "price-asc") {
+      url += "&sortBy=price%20asc";
+    } else if (sort === "price-desc") {
+      url += "&sortBy=price%20desc";
+    } else if (sort === "name-asc") {
+      url += "&sortBy=name%20asc";
+    } else if (sort === "name-desc") {
+      url += "&sortBy=name%20desc";
+    } else if (sort === "oldest") {
+      url += "&sortBy=created%20asc";
+    } else if (sort === "newest") {
+      url += "&sortBy=created%20desc";
+    }
+    const res = await fetch(url);
+    const data = await res.json();
+    if (reset) {
+      setProducts(data);
+    } else {
+      setProducts((prev) => [...prev, ...data]);
+    }
+    setHasMore(data.length === pageSize);
+    setLoading(false);
+  };
+
+  const handleLoadMore = () => {
+    const nextOffset = offset + pageSize;
+    setOffset(nextOffset);
+    fetchProducts(nextOffset);
+  };
+
+  const handleDeleteClick = (productId: string) => {
+    setDeleteId(productId);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteId) return;
+    try {
+      await fetch(
+        `https://headwheel-us.backendless.app/api/data/products/${deleteId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      setProducts((prev) => prev.filter((p) => p.objectId !== deleteId));
+    } catch (err) {
+      throw new Error("Failed to delete product " + err);
+    }
+    setConfirmOpen(false);
+    setDeleteId(null);
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmOpen(false);
+    setDeleteId(null);
+  };
 
   return (
     <RoleGuard>
@@ -65,7 +134,7 @@ export default function ProductsPage() {
             </div>
             {isEditor && (
               <Link
-                href="/dashboard/products/new"
+                href="/dashboard/create-product"
                 className="px-4 py-2 bg-blue-600 text-white rounded-none hover:bg-blue-700 flex items-center"
               >
                 <svg
@@ -92,97 +161,147 @@ export default function ProductsPage() {
             <div className="w-full md:w-64">
               <select
                 className="w-full p-2 border border-gray-300 rounded-none"
-                onChange={() =>
-                  alert("Filter functionality would be implemented here")
-                }
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
               >
-                <option value="">All Categories</option>
-                <option value="packaging">Packaging</option>
-                <option value="cups">Cups</option>
-                <option value="containers">Containers</option>
-                <option value="bags">Bags</option>
+                {categories.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="w-full md:w-64">
               <select
                 className="w-full p-2 border border-gray-300 rounded-none"
-                onChange={() =>
-                  alert("Sort functionality would be implemented here")
-                }
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
               >
-                <option value="newest">Newest First</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="name-asc">Name: A to Z</option>
+                {sortOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="bg-white shadow-md rounded-none overflow-hidden"
-              >
-                <div className="h-48 bg-gray-200 relative">
-                  <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
-                    Product Image
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            {products.map((product) => {
+              let imageUrl = "";
+              if (product.images) {
+                try {
+                  const imgs = JSON.parse(product.images);
+                  imageUrl = imgs[0] || "";
+                } catch {
+                  imageUrl = "";
+                }
+              }
+              return (
+                <div
+                  key={product.objectId}
+                  className="bg-white shadow-md rounded-none overflow-hidden flex flex-col"
+                >
+                  <div className="h-48 bg-gray-200 relative">
+                    {imageUrl ? (
+                      <Image
+                        fill
+                        src={imageUrl}
+                        alt={product.name}
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+                        No Image
+                      </div>
+                    )}
                   </div>
-                </div>
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-semibold">{product.name}</h3>
-                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                      {product.category}
-                    </span>
-                  </div>
-                  <p className="text-gray-600 mb-3 line-clamp-2">
-                    {product.description}
-                  </p>
-                  <p className="text-gray-900 font-bold mb-4">
-                    ${product.price.toFixed(2)}
-                  </p>
-
-                  <div className="flex justify-between items-center">
-                    <Link
-                      href={`/products/${product.id}`}
-                      className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-none hover:bg-gray-200"
-                    >
-                      View Details
-                    </Link>
-                    <div className="space-x-2">
-                      {isEditor && (
-                        <Link
-                          href={`/dashboard/products/edit/${product.id}`}
-                          className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-none hover:bg-blue-200"
-                        >
-                          Edit
-                        </Link>
-                      )}
-                      {isAdmin && (
-                        <button
-                          className="px-3 py-1 bg-red-100 text-red-700 text-sm rounded-none hover:bg-red-200"
-                          onClick={() =>
-                            alert(
-                              "Delete functionality would be implemented here"
-                            )
-                          }
-                        >
-                          Delete
-                        </button>
-                      )}
+                  <div className="p-6 flex flex-col flex-1">
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="text-xl font-semibold">
+                          {product.name}
+                        </h3>
+                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                          {product.category}
+                        </span>
+                      </div>
+                      <p className="text-gray-600 mb-3 line-clamp-2">
+                        {product.description}
+                      </p>
+                      <p className="text-gray-900 font-bold mb-4">
+                        {product.price ? `$${product.price.toFixed(2)}` : ""}
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center mt-auto pt-4">
+                      <Link
+                        href={`/products/${product.slug || product.objectId}`}
+                        className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-none hover:bg-gray-200"
+                      >
+                        View Details
+                      </Link>
+                      <div className="space-x-2">
+                        {isEditor && (
+                          <Link
+                            href={`/dashboard/products/edit/${product.objectId}`}
+                            className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-none hover:bg-blue-200"
+                          >
+                            Edit
+                          </Link>
+                        )}
+                        {isAdmin && (
+                          <button
+                            className="px-3 py-1 bg-red-100 text-red-700 text-sm rounded-none hover:bg-red-200"
+                            onClick={() => handleDeleteClick(product.objectId)}
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          <div className="mt-8 text-center">
-            <button className="px-4 py-2 border border-gray-300 rounded-none text-gray-600 hover:bg-gray-50">
-              Load More
-            </button>
-          </div>
+          {hasMore && (
+            <div className="mt-8 text-center">
+              <button
+                className="px-4 py-2 border border-gray-300 rounded-none text-gray-600 hover:bg-gray-50"
+                onClick={handleLoadMore}
+                disabled={loading}
+              >
+                {loading ? "Loading..." : "Load More"}
+              </button>
+            </div>
+          )}
+
+          {/* Confirmation Modal */}
+          {confirmOpen && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+              <div className="bg-white p-6 rounded shadow-lg max-w-sm w-full">
+                <h2 className="text-lg font-semibold mb-4">Confirm Deletion</h2>
+                <p className="mb-6">
+                  Are you sure you want to delete this product?
+                </p>
+                <div className="flex justify-end space-x-3">
+                  <button
+                    className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                    onClick={handleCancelDelete}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                    onClick={handleConfirmDelete}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </RoleGuard>

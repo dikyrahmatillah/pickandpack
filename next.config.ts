@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
       new URL("https://cdn.prod.website-files.com/**"),
       new URL("https://randomuser.me/**"),
       new URL("https://example.com/**"),
+      new URL("https://pickandpack.id/**"),
+      new URL("https://pickandpack.id/image/career/**"),
     ],
   },
 };

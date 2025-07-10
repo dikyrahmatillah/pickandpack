@@ -18,15 +18,7 @@ export default function DashboardSidebar() {
     session.user.role === "admin" || session.user.role === "editor";
 
   return (
-    <aside className="w-64 bg-white h-full shadow-md fixed left-0 top-0 overflow-y-auto">
-      {/* Sidebar header */}
-      <div className="p-6 border-b">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gray-900"></div>
-          <span className="font-bold text-lg">Pick & Pack</span>
-        </Link>
-      </div>
-
+    <aside className="w-64  pt-20 md:pt-40 bg-white h-full shadow-md fixed left-0 top-0 overflow-y-auto">
       {/* User profile */}
       <div className="p-6 border-b">
         <div className="flex items-center">

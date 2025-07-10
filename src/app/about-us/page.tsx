@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 type TeamMember = {
@@ -243,9 +244,11 @@ export default function AboutPage() {
                     transition={{ duration: 0.6, delay: i * 0.2 }}
                   >
                     <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                      <img
+                      <Image
                         src={member.picture.large}
                         alt={member.name.first}
+                        width={128}
+                        height={128}
                         className="w-full h-full object-cover"
                       />
                     </div>

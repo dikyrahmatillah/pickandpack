@@ -6,66 +6,62 @@ import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import { EditorGuard } from "@/components/auth/RoleGuard";
 import Link from "next/link";
 
-// Define the product type
-interface ProductType {
-  id: string | number;
+type ProductType = {
+  objectId: string;
   name: string;
+  slug: string;
   description: string;
-  price: number;
   category: string;
-  imageUrl: string;
-  stock: number;
-  minimumOrder: number;
-}
+  images: string; // JSON stringified array
+  utility: string;
+  material: string;
+};
+
+const categories = [
+  { value: "", label: "Select a category" },
+  { value: "Makanan", label: "Makanan" },
+  { value: "Minuman", label: "Minuman" },
+  { value: "Pengiriman", label: "Pengiriman" },
+];
 
 export default function EditProductPage() {
   const params = useParams();
   const router = useRouter();
-  const productId = params.id;
+  const productId = params.id as string;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState<ProductType>({
-    id: "",
+    objectId: "",
     name: "",
+    slug: "",
     description: "",
-    price: 0,
     category: "",
-    imageUrl: "",
-    stock: 0,
-    minimumOrder: 0,
+    images: "",
+    utility: "",
+    material: "",
   });
 
   useEffect(() => {
-    // In a real app, you'd fetch this data from your API
     const fetchProduct = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        // Mock product data - this would come from your API
-        const mockProduct = {
-          id: productId,
-          name: "Premium Tea Box",
-          description:
-            "Elegant packaging solution for premium tea brands. Our sustainable materials provide excellent protection while maintaining a luxurious feel.",
-          price: 12.99,
-          category: "Packaging",
-          imageUrl: "/public/images/products/burger-box-1.webp",
-          stock: 250,
-          minimumOrder: 100,
-        };
-
-        setFormData(mockProduct as ProductType);
+        const res = await fetch(
+          `https://headwheel-us.backendless.app/api/data/products/${productId}`
+        );
+        if (!res.ok) throw new Error("Product not found");
+        const data = await res.json();
+        setFormData({
+          ...data,
+        });
       } catch (error) {
-        console.error("Error fetching product:", error);
+        alert("Failed to fetch product data.");
+        router.push("/dashboard/products");
       } finally {
         setLoading(false);
       }
     };
-
-    fetchProduct();
-  }, [productId]);
+    if (productId) fetchProduct();
+  }, [productId, router]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -73,36 +69,43 @@ export default function EditProductPage() {
     >
   ) => {
     const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
-    // Handle numeric values
-    if (name === "price" || name === "stock" || name === "minimumOrder") {
-      setFormData({
-        ...formData,
-        [name]: value === "" ? 0 : parseFloat(value),
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
+  const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      images: JSON.stringify(
+        e.target.value
+          .split(",")
+          .map((img) => img.trim())
+          .filter(Boolean)
+      ),
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // In a real app, you'd update the product via API
-      console.log("Saving product:", formData);
-
+      const payload = {
+        ...formData,
+      };
+      const res = await fetch(
+        `https://headwheel-us.backendless.app/api/data/products/${productId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!res.ok) throw new Error("Failed to update product");
       alert("Product updated successfully!");
       router.push("/dashboard/products");
     } catch (error) {
-      console.error("Error updating product:", error);
       alert("Failed to update product. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -124,6 +127,14 @@ export default function EditProductPage() {
         </main>
       </EditorGuard>
     );
+  }
+
+  // Parse images for display
+  let images: string[] = [];
+  try {
+    images = formData.images ? JSON.parse(formData.images) : [];
+  } catch {
+    images = [];
   }
 
   return (
@@ -150,7 +161,7 @@ export default function EditProductPage() {
               Edit Product
             </h1>
             <p className="text-gray-600">
-              Update product information and inventory
+              Update product information and details
             </p>
           </div>
 
@@ -177,6 +188,24 @@ export default function EditProductPage() {
 
                 <div>
                   <label
+                    htmlFor="slug"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Slug *
+                  </label>
+                  <input
+                    type="text"
+                    id="slug"
+                    name="slug"
+                    value={formData.slug}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label
                     htmlFor="category"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
@@ -190,47 +219,55 @@ export default function EditProductPage() {
                     className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   >
-                    <option value="">Select a category</option>
-                    <option value="Packaging">Packaging</option>
-                    <option value="Cups">Cups</option>
-                    <option value="Containers">Containers</option>
-                    <option value="Bags">Bags</option>
-                    <option value="Accessories">Accessories</option>
+                    {categories.map((cat) => (
+                      <option key={cat.value} value={cat.value}>
+                        {cat.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
                   <label
-                    htmlFor="price"
+                    htmlFor="images"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Price ($) *
-                  </label>
-                  <input
-                    type="number"
-                    id="price"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleChange}
-                    step="0.01"
-                    min="0"
-                    className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="imageUrl"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Product Image URL *
+                    Images (comma separated URLs) *
                   </label>
                   <input
                     type="text"
-                    id="imageUrl"
-                    name="imageUrl"
-                    value={formData.imageUrl}
+                    id="images"
+                    name="images"
+                    value={images.join(", ")}
+                    onChange={handleImagesChange}
+                    className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {images.map((img, idx) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        key={idx}
+                        src={img}
+                        alt={`Preview ${idx + 1}`}
+                        className="w-20 h-20 object-cover border rounded"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="utility"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Utility *
+                  </label>
+                  <input
+                    type="text"
+                    id="utility"
+                    name="utility"
+                    value={formData.utility}
                     onChange={handleChange}
                     className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
@@ -239,37 +276,17 @@ export default function EditProductPage() {
 
                 <div>
                   <label
-                    htmlFor="stock"
+                    htmlFor="material"
                     className="block text-sm font-medium text-gray-700 mb-1"
                   >
-                    Stock Quantity *
+                    Material *
                   </label>
                   <input
-                    type="number"
-                    id="stock"
-                    name="stock"
-                    value={formData.stock}
+                    type="text"
+                    id="material"
+                    name="material"
+                    value={formData.material}
                     onChange={handleChange}
-                    min="0"
-                    className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="minimumOrder"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Minimum Order Quantity *
-                  </label>
-                  <input
-                    type="number"
-                    id="minimumOrder"
-                    name="minimumOrder"
-                    value={formData.minimumOrder}
-                    onChange={handleChange}
-                    min="1"
                     className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />

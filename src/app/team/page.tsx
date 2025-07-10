@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 type TeamMember = {
   login: { uuid: string };
@@ -27,40 +28,102 @@ export default function TeamPage() {
     fetchTeam();
   }, []);
 
+  // Animation variants
+  const sectionVariant = {
+    hidden: { opacity: 0, y: 40 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.7, ease: "easeOut" as const },
+    },
+  };
+  const cardVariant = {
+    hidden: { opacity: 0, y: 40 },
+    visible: (i = 1) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, delay: i * 0.2, ease: "easeOut" as const },
+    }),
+  };
+
   return (
-    <main className="px-4 sm:px-8 md:px-28 py-8 pt-30 md:pt-50">
+    <main className="px-4 sm:px-8 md:px-28 py-8 pt-20 md:pt-40">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-gray-900 to-gray-700 text-white py-20">
+      <motion.section
+        className="-mx-4 sm:-mx-8 md:-mx-28 bg-gradient-to-r from-gray-900 to-gray-700 text-white py-20"
+        variants={sectionVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h1 className="text-5xl md:text-6xl font-bold mb-6">Our Team</h1>
-              <p className="text-xl md:text-2xl text-gray-100 leading-relaxed">
+              <motion.h1
+                className="text-5xl md:text-6xl font-bold mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                Our Team
+              </motion.h1>
+              <motion.p
+                className="text-xl md:text-2xl text-gray-100 leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
                 Meet the talented individuals behind Pick & Pack. Our diverse
                 team combines creativity, technical expertise, and passion to
                 deliver exceptional packaging solutions.
-              </p>
+              </motion.p>
             </div>
-            <div className="relative h-96 rounded-2xl overflow-hidden">
+            <motion.div
+              className="relative h-96 rounded-4xl overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
               <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
                 <div className="text-8xl text-white opacity-50">👥</div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Team Members Section */}
-      <section className="py-20 bg-white">
+      <motion.section
+        className="py-20 bg-white"
+        variants={sectionVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <motion.h2
+              className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
               Meet Our Team
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            </motion.h2>
+            <motion.p
+              className="text-xl text-gray-600 max-w-3xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
               The creative minds and skilled hands that make Pick & Pack a
               leader in sustainable packaging solutions.
-            </p>
+            </motion.p>
           </div>
 
           {loading ? (
@@ -69,21 +132,26 @@ export default function TeamPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {teamMembers.map((member) => (
-                <div
+              {teamMembers.map((member, i) => (
+                <motion.div
                   key={member.login.uuid}
-                  className="bg-white rounded-2xl overflow-hidden shadow-lg"
+                  className="bg-white overflow-hidden"
+                  custom={i}
+                  variants={cardVariant}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
                 >
-                  <div className="relative h-80 bg-gray-200">
+                  <div className="relative h-80">
                     <Image
                       src={member.picture.large}
                       alt={member.name.first + " " + member.name.last}
-                      className="object-cover w-full h-full"
-                      width={400}
-                      height={400}
+                      className="object-cover w-full h-full rounded-4xl"
+                      width={128}
+                      height={128}
                     />
                   </div>
-                  <div className="p-6">
+                  <div className="p-6 border rounded-4xl">
                     <h3 className="text-2xl font-bold text-gray-900 mb-1">
                       {member.name.first} {member.name.last}
                     </h3>
@@ -91,7 +159,6 @@ export default function TeamPage() {
                       {member.location.country}
                     </div>
                     <p className="text-gray-600 mb-4">{member.email}</p>
-
                     <div className="mb-4">
                       <h4 className="font-semibold text-gray-900 mb-2">
                         Phone:
@@ -103,15 +170,21 @@ export default function TeamPage() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           )}
         </div>
-      </section>
+      </motion.section>
 
       {/* Company Values */}
-      <section className="py-20 bg-gray-50 rounded-4xl">
+      <motion.section
+        className="-mx-4 sm:-mx-8 md:-mx-28 py-20 bg-gray-50 "
+        variants={sectionVariant}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
@@ -123,7 +196,7 @@ export default function TeamPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl p-8 text-center shadow-md">
+            <div className="bg-white rounded-[15%] px-8 py-12 text-center shadow-md">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center text-3xl">
                 💡
               </div>
@@ -136,7 +209,7 @@ export default function TeamPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 text-center shadow-md">
+            <div className="bg-white rounded-[15%] px-8 py-12 text-center shadow-md">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center text-3xl">
                 🌱
               </div>
@@ -149,7 +222,7 @@ export default function TeamPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 text-center shadow-md">
+            <div className="bg-white rounded-[15%] px-8 py-12 text-center shadow-md">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center text-3xl">
                 🤝
               </div>
@@ -163,7 +236,7 @@ export default function TeamPage() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
     </main>
   );
 }

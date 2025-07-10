@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
 export default function CreateProductPage() {
   const router = useRouter();
@@ -10,6 +12,7 @@ export default function CreateProductPage() {
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
+    category: "",
     images: [""],
     utility: "",
     description: "",
@@ -18,7 +21,9 @@ export default function CreateProductPage() {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -38,12 +43,29 @@ export default function CreateProductPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      // In a real app, send formData to backend API
-      console.log("Product to create:", formData);
+      // Prepare payload for Backendless (images as JSON string)
+      const payload = {
+        ...formData,
+        images: JSON.stringify(formData.images.filter(Boolean)),
+      };
+
+      const res = await fetch(
+        "https://headwheel-us.backendless.app/api/data/products",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to create product");
+      }
+
       alert("Product created successfully!");
       router.push("/dashboard/products");
     } catch (error) {
-      alert("Failed to create product. Please try again." + error);
+      alert("Failed to create product. Please try again. " + error);
     } finally {
       setIsSubmitting(false);
     }
@@ -59,12 +81,13 @@ export default function CreateProductPage() {
           </h1>
           <p className="text-gray-600">Add a new product to your catalog.</p>
         </div>
-        <div className="bg-white p-6 rounded-none shadow-md">
+        <div>
+          {/* forms */}
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-md font-medium text-gray-700 mb-1"
               >
                 Name
               </label>
@@ -74,14 +97,14 @@ export default function CreateProductPage() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-2xl"
                 required
               />
             </div>
             <div className="mb-4">
               <label
                 htmlFor="slug"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-md font-medium text-gray-700 mb-1"
               >
                 Slug (unique, lowercase, hyphens)
               </label>
@@ -91,14 +114,40 @@ export default function CreateProductPage() {
                 name="slug"
                 value={formData.slug}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-2xl"
                 required
               />
             </div>
             <div className="mb-4">
               <label
+                htmlFor="category"
+                className="block text-md font-medium text-gray-700 mb-1"
+              >
+                Category
+              </label>
+              <div className="relative">
+                <select
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="w-full p-3 appearance-none border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-2xl"
+                  required
+                >
+                  <option value="">Select category</option>
+                  <option value="Makanan">Makanan</option>
+                  <option value="Minuman">Minuman</option>
+                  <option value="Pengiriman">Pengiriman</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-1 flex items-center px-2 text-gray-400">
+                  <FontAwesomeIcon icon={faChevronDown} />
+                </div>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label
                 htmlFor="images"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-md font-medium text-gray-700 mb-1"
               >
                 Images (comma separated URLs)
               </label>
@@ -108,15 +157,28 @@ export default function CreateProductPage() {
                 name="images"
                 value={formData.images.join(", ")}
                 onChange={handleImagesChange}
-                className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="/images/products/example-1.webp, /images/products/example-2.webp"
+                className="w-full p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-2xl"
+                placeholder="https://images.com/images/example-1.webp, https://images.com/images/example-2.webp"
                 required
               />
+              <div className="flex flex-wrap gap-2 mt-2">
+                {formData.images
+                  .filter((img) => img.trim() !== "")
+                  .map((img, idx) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={idx}
+                      src={img}
+                      alt={`Preview ${idx + 1}`}
+                      className="w-20 h-20 object-cover border rounded"
+                    />
+                  ))}
+              </div>
             </div>
             <div className="mb-4">
               <label
                 htmlFor="utility"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-md font-medium text-gray-700 mb-1"
               >
                 Utility
               </label>
@@ -126,14 +188,14 @@ export default function CreateProductPage() {
                 name="utility"
                 value={formData.utility}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-2xl"
                 required
               />
             </div>
             <div className="mb-4">
               <label
                 htmlFor="description"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-md font-medium text-gray-700 mb-1"
               >
                 Description
               </label>
@@ -142,14 +204,14 @@ export default function CreateProductPage() {
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
+                className="w-full p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-2xl min-h-[100px]"
                 required
               />
             </div>
             <div className="mb-4">
               <label
                 htmlFor="material"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="block text-md font-medium text-gray-700 mb-1"
               >
                 Material
               </label>
@@ -159,39 +221,15 @@ export default function CreateProductPage() {
                 name="material"
                 value={formData.material}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="size"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Size
-              </label>
-              <input
-                type="text"
-                id="size"
-                name="size"
-                value={formData.size}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-2xl"
                 required
               />
             </div>
             <div className="flex justify-end">
               <button
-                type="button"
-                onClick={() => router.back()}
-                className="px-4 py-2 text-gray-700 bg-gray-200 rounded-none hover:bg-gray-300 mr-2"
-              >
-                Cancel
-              </button>
-              <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-4 py-2 text-white bg-blue-600 rounded-none hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-6 py-4 text-md text-white bg-blue-600 rounded-none hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {isSubmitting ? "Creating..." : "Create Product"}
               </button>
