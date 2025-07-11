@@ -84,9 +84,9 @@ export default function ProductsPage() {
   const totalPages = Math.ceil(total / pageSize);
 
   return (
-    <main className="px-4 sm:px-8 md:px-28 py-8 pt-30 md:pt-50">
+    <main className="px-4 sm:px-8 md:px-28 py-8 pt-20 md:pt-25">
       {/* Breadcrumb */}
-      <nav className="text-md text-gray-400 mb-4">
+      <nav className="text-sm text-gray-400 mb-4">
         <ol className="list-reset flex">
           <li>
             <Link href="/" className="hover:underline">
@@ -102,7 +102,7 @@ export default function ProductsPage() {
 
       {/* Heading */}
       <div className="mb-8">
-        <h1 className="text-6xl font-extrabold tracking-tight">Produk Kami:</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight">Produk Kami:</h1>
       </div>
 
       <div className="flex flex-col lg:flex-row">
@@ -110,10 +110,10 @@ export default function ProductsPage() {
         <aside className="w-full lg:w-48 mb-8 lg:mb-0 lg:mr-8">
           {/* Category Filter */}
           <div className="mb-8">
-            <div className="font-semibold text-lg mb-4 text-gray-800 tracking-wide">
+            <div className="font-semibold text-base mb-4 text-gray-800 tracking-wide">
               Kategori
             </div>
-            <ul className="space-y-2 font-semibold text-base">
+            <ul className="space-y-2 font-semibold text-sm">
               {sidebar.map((item, idx) => (
                 <li
                   key={idx}
@@ -135,7 +135,7 @@ export default function ProductsPage() {
           </div>
           {/* Sort Button Group */}
           <div className="mt-8">
-            <div className="font-semibold text-lg mb-2">Urutkan:</div>
+            <div className="font-semibold text-base mb-2">Urutkan:</div>
             <div className="flex flex-wrap gap-2">
               {sortOptions.map((opt) => (
                 <button
@@ -144,7 +144,7 @@ export default function ProductsPage() {
                     setSort(opt.value);
                     setPage(1);
                   }}
-                  className={`px-4 py-2 border transition-colors duration-150 cursor-pointer
+                  className={`px-2 py-1 border transition-colors duration-150 cursor-pointer
                     ${
                       sort === opt.value
                         ? "bg-black text-white border-black"
@@ -152,7 +152,7 @@ export default function ProductsPage() {
                     }
                   `}
                 >
-                  {opt.label}
+                  <span className="text-sm">{opt.label}</span>
                 </button>
               ))}
             </div>
@@ -168,7 +168,7 @@ export default function ProductsPage() {
           </div>
         ) : (
           <section className="flex-1">
-            <div className="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-x-4 gap-y-14">
+            <div className="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-x-2 gap-y-8">
               {products.map((product, idx) => {
                 const isBox = isPrime(idx);
                 let images: string[] = [];
@@ -178,7 +178,7 @@ export default function ProductsPage() {
                 return (
                   <div key={product.name} className="max-w-full w-full mx-auto">
                     <div
-                      className={`aspect-square w-full mb-6 relative group overflow-hidden ${
+                      className={`aspect-square w-full mb-4 relative group overflow-hidden ${
                         isBox ? "rounded-none" : "rounded-[20%]"
                       }`}
                     >
@@ -193,14 +193,14 @@ export default function ProductsPage() {
                       />
                       <Link
                         href={`/products/${product.slug}`}
-                        className="absolute left-0 right-0 bottom-0 translate-y-10 group-hover:-translate-y-8 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                        className="absolute left-0 right-0 bottom-0 translate-y-8 group-hover:-translate-y-4 opacity-0 group-hover:opacity-100 transition-all duration-300"
                       >
                         <span
                           id="contact-button-black"
                           className={
                             isBox
-                              ? "block bg-black text-white py-20 mx-8 text-2xl shadow-lg text-center rounded-none"
-                              : "block bg-black text-white py-20 mx-8 text-2xl shadow-lg text-center rounded-full"
+                              ? "block bg-black text-white py-10 mx-4 text-lg shadow-lg text-center rounded-none"
+                              : "block bg-black text-white py-10 mx-4 text-lg shadow-lg text-center rounded-full"
                           }
                         >
                           Detail
@@ -209,11 +209,11 @@ export default function ProductsPage() {
                     </div>
                     <Link
                       href={`/products/${product.slug}`}
-                      className="font-bold uppercase text-lg sm:text-xl"
+                      className="font-bold uppercase text-base sm:text-lg"
                     >
                       {product.name}
                     </Link>
-                    <div className="text-xl text-gray-500 mb-6 mt-2">
+                    <div className="text-base text-gray-500 mb-4 mt-1">
                       {product.utility}
                     </div>
                   </div>

@@ -32,16 +32,16 @@ export default function FollowUsSection() {
       ref={sectionRef}
       initial="hidden"
       animate={controls}
-      className="w-full py-10 mt-20 sm:py-16 md:py-20 bg-white pr-0 sm:pr-8 md:pr-20 overflow-x-hidden"
+      className="w-full py-6 mt-10 sm:py-10 md:py-14 bg-white pr-0 sm:pr-4 md:pr-10 overflow-x-hidden"
     >
       <div className="flex flex-col items-start w-3/4">
-        <h2 className="text-3xl sm:text-5xl md:text-6xl ml-auto font-extrabold text-gray-900 mb-8 md:mb-12">
+        <h2 className="text-2xl sm:text-4xl md:text-5xl ml-auto font-extrabold text-gray-900 mb-6 md:mb-8">
           FOLLOW US
         </h2>
         <div className="relative flex items-start w-full">
           <div
             className="
-              flex flex-col sm:flex-row-reverse items-start gap-4 sm:gap-8 w-full
+              flex flex-col sm:flex-row-reverse items-start gap-2 sm:gap-4 w-full
               overflow-hidden
               sm:ml-0
             "
@@ -52,7 +52,7 @@ export default function FollowUsSection() {
                 className="overflow-hidden shadow-lg rounded-2xl"
                 style={{
                   width: "100%",
-                  maxWidth: "500px",
+                  maxWidth: "320px",
                   aspectRatio: "1/1",
                   zIndex: images.length,
                 }}
@@ -73,8 +73,8 @@ export default function FollowUsSection() {
                   <Image
                     src={images[0].src}
                     alt={images[0].alt}
-                    width={500}
-                    height={500}
+                    width={320}
+                    height={320}
                     className="object-cover w-full h-full"
                     sizes="90vw"
                   />
@@ -82,16 +82,16 @@ export default function FollowUsSection() {
               </motion.div>
             </div>
             {/* Show all images on sm and up */}
-            <div className="hidden sm:flex flex-row-reverse items-start gap-8 w-full">
+            <div className="hidden sm:flex flex-row-reverse items-start gap-4 w-full">
               {images.map((img, i) => (
                 <motion.div
                   key={img.src}
                   className={`relative overflow-hidden shadow-lg flex-shrink-0 ${
-                    i === 0 ? "rounded-2xl sm:rounded-[48px]" : "rounded-none"
+                    i === 0 ? "rounded-2xl sm:rounded-3xl" : "rounded-none"
                   } group`}
                   style={{
                     width: "100%",
-                    maxWidth: "500px",
+                    maxWidth: "320px",
                     aspectRatio: "1/1",
                     zIndex: images.length - i,
                   }}
@@ -115,18 +115,18 @@ export default function FollowUsSection() {
                     <Image
                       src={img.src}
                       alt={img.alt}
-                      width={500}
-                      height={500}
+                      width={320}
+                      height={320}
                       className="object-cover w-full h-full transition-all duration-300 group-hover:blur-sm"
-                      sizes="(min-width: 1200px) 500px, (min-width: 640px) 33vw, 90vw"
+                      sizes="(min-width: 1200px) 320px, (min-width: 640px) 33vw, 90vw"
                     />
                     <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50">
                       <FontAwesomeIcon
                         icon={faInstagram}
                         className="mb-2 text-white"
-                        size="3x"
+                        size="2x"
                       />
-                      <span className="text-white text-lg font-semibold">
+                      <span className="text-white text-base font-semibold">
                         Follow us on Instagram
                       </span>
                     </div>

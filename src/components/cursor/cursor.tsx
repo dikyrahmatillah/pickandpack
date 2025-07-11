@@ -69,13 +69,13 @@ const BoxCursor: React.FC = () => {
         position: "fixed",
         left: 0,
         top: 0,
-        width: active ? "64px" : "40px",
-        height: active ? "64px" : "40px",
+        width: active ? "44px" : "22px",
+        height: active ? "44px" : "22px",
         background: active ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.15)",
         border: whiteBorder
-          ? "3px solid rgba(255,255,255,0.95)"
+          ? "2px solid rgba(255,255,255,0.95)"
           : "2px solid rgba(0,0,0,0.7)",
-        borderRadius: "12px",
+        borderRadius: active ? "12px" : "7px",
         pointerEvents: "none",
         transform: `translate(-50%, -50%) rotate(${active ? 90 : 0}deg)`,
         zIndex: 9999,

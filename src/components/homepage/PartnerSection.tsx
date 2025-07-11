@@ -46,15 +46,15 @@ export default function PartnerSection() {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: "easeOut" }}
       viewport={{ once: true, amount: 0.75 }}
-      className="w-full max-w-[100vw] overflow-x-hidden bg-gray-50 py-16 flex flex-col items-center justify-center"
+      className="w-full max-w-[100vw] overflow-x-hidden bg-gray-50 py-8 flex flex-col items-center justify-center"
       onAnimationComplete={() => setMarquee(true)}
     >
-      <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
+      <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">
         Proud to partner with these brands that trust us
       </h3>
       <div className="overflow-hidden w-full">
         <div
-          className="flex gap-24"
+          className="flex gap-10"
           style={{
             minWidth: "max-content",
             animation: marquee ? "marquee 60s linear infinite" : undefined,

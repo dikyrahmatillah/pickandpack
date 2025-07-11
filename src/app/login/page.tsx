@@ -58,21 +58,21 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 bg-gray-50">
-      <div className="w-full max-w-xl bg-white rounded-[15%] shadow-2xl p-12">
-        <h1 className="text-3xl font-bold mb-8 text-gray-900 text-center">
+    <main className="flex min-h-screen items-center justify-center px-2 bg-gray-50">
+      <div className="w-full max-w-sm bg-white rounded-[15%] shadow-xl p-6">
+        <h1 className="text-2xl font-bold mb-6 text-gray-900 text-center">
           Sign In
         </h1>
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 rounded">
+          <div className="mb-3 p-2 bg-red-50 border-l-4 border-red-500 text-red-700 rounded">
             {error}
           </div>
         )}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-xs font-medium text-gray-700 mb-1"
             >
               Email
             </label>
@@ -83,7 +83,7 @@ export default function LoginPage() {
               onChange={(e) =>
                 setCredentials({ ...credentials, email: e.target.value })
               }
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm"
               placeholder="your@email.com"
               required
             />
@@ -91,7 +91,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-xs font-medium text-gray-700 mb-1"
             >
               Password
             </label>
@@ -102,7 +102,7 @@ export default function LoginPage() {
               onChange={(e) =>
                 setCredentials({ ...credentials, password: e.target.value })
               }
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm"
               placeholder="••••••••"
               required
             />
@@ -110,7 +110,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gray-900 text-white py-3 rounded-2xl font-medium hover:bg-gray-800 transition-colors disabled:opacity-50"
+            className="w-full bg-gray-900 text-white py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 text-sm"
           >
             {isLoading ? "Signing in..." : "Sign In"}
           </button>
@@ -118,8 +118,8 @@ export default function LoginPage() {
 
         {/* Development helper for quick logins */}
         {process.env.NODE_ENV !== "production" && (
-          <div className="mt-6 border-t pt-4 border-gray-200">
-            <p className="text-sm text-gray-600 mb-2">
+          <div className="mt-4 border-t pt-2 border-gray-200">
+            <p className="text-xs text-gray-600 mb-1">
               <button
                 type="button"
                 onClick={() => setShowHints(!showHints)}
@@ -129,7 +129,7 @@ export default function LoginPage() {
               </button>
             </p>
             {showHints && (
-              <div className="grid grid-cols-1 gap-2 mt-2">
+              <div className="grid grid-cols-1 gap-1 mt-1">
                 {userHints.map((user) => (
                   <button
                     key={user.email}
@@ -144,23 +144,23 @@ export default function LoginPage() {
           </div>
         )}
 
-        <div className="mt-8 flex flex-col gap-4">
+        <div className="mt-5 flex flex-col gap-2">
           <button
             type="button"
             onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-            className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50"
+            className="flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
           >
             <span className="mr-2">🔵</span> Google
           </button>
           <button
             type="button"
             onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
-            className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-xl shadow-sm text-base font-medium text-gray-700 bg-white hover:bg-gray-50"
+            className="flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
           >
             <span className="mr-2">🐙</span> GitHub
           </button>
         </div>
-        <p className="mt-10 text-center text-base text-gray-600">
+        <p className="mt-6 text-center text-xs text-gray-600">
           Don&apos;t have an account?{" "}
           <Link
             href="/contact"

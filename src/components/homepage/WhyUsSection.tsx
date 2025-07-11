@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 export default function WhyUsSection() {
   return (
     <motion.section
-      className="py-20 bg-white mt-10 md:mt-40"
+      className="py-20 bg-white my-10 md:my-20"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.3 }}
@@ -21,7 +21,7 @@ export default function WhyUsSection() {
           transition={{ duration: 0.8 }}
         >
           <motion.h2
-            className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
+            className="text-2xl md:text-3xl font-bold text-gray-900 mb-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -35,7 +35,7 @@ export default function WhyUsSection() {
           {whyUs.map((flow, index) => (
             <motion.div
               key={index}
-              className="group bg-gray-50 rounded-2xl p-8 hover:shadow-lg transition-all duration-300"
+              className="group bg-gray-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -49,16 +49,16 @@ export default function WhyUsSection() {
               }}
             >
               <div
-                className={`inline-block px-4 py-2 rounded-full text-sm font-medium mb-4 ${flow.color}`}
+                className={`inline-block px-3 py-1 rounded-full text-xs font-medium mb-3 ${flow.color}`}
               >
                 #{index + 1}
               </div>
 
-              <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">
+              <h3 className="text-base font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">
                 {flow.title}
               </h3>
 
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-sm text-gray-600 leading-relaxed">
                 {flow.description}
               </p>
             </motion.div>

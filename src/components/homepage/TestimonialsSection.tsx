@@ -44,7 +44,7 @@ export default function TestimonialsSection() {
   return (
     <>
       <motion.section
-        className="py-20 bg-gray-100"
+        className="py-10 bg-gray-100"
         initial={{ opacity: 0, scale: 0.95, y: 80, filter: "blur(8px)" }}
         whileInView={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
         viewport={{ once: true, amount: 0.4 }}
@@ -53,16 +53,16 @@ export default function TestimonialsSection() {
           ease: [0.22, 1, 0.36, 1], // easeOutExpo
         }}
       >
-        <div className="max-w-screen mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+        <div className="max-w-screen mx-auto px-2 sm:px-4 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2">
               TESTIMONIALS
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-base text-gray-600 max-w-2xl mx-auto">
               Real stories, real results from our clients and partners
             </p>
           </div>
-          <div className="relative flex flex-col items-center mb-16">
+          <div className="relative flex flex-col items-center mb-8">
             {/* Carousel Container */}
             <div className="relative w-full flex justify-center items-center">
               {/* Left Nav Button */}
@@ -72,11 +72,11 @@ export default function TestimonialsSection() {
                 className="absolute left-0 sm:left-1/3 top-1/2 -translate-y-1/2 z-20"
               >
                 <FontAwesomeIcon
-                  className="text-6xl hover:scale-125 transition-transform duration-1000"
+                  className="text-4xl hover:scale-125 transition-transform duration-1000"
                   icon={faChevronLeft}
                 />
               </button>
-              <div className="w-full flex justify-center gap-4 sm:gap-8 md:gap-12">
+              <div className="w-full flex justify-center gap-2 sm:gap-4 md:gap-6">
                 {getVisibleItems().map((item, i) => (
                   <motion.div
                     key={item.id}
@@ -102,10 +102,10 @@ export default function TestimonialsSection() {
                   >
                     <div
                       style={{
-                        width: 600,
-                        height: 600,
-                        maxWidth: "90vw",
-                        maxHeight: "90vw",
+                        width: 240,
+                        height: 240,
+                        maxWidth: "70vw",
+                        maxHeight: "70vw",
                       }}
                     >
                       <Image
@@ -126,17 +126,17 @@ export default function TestimonialsSection() {
                 className="absolute right-0 sm:right-1/3 top-1/2 -translate-y-1/2 z-20"
               >
                 <FontAwesomeIcon
-                  className="text-6xl hover:scale-125 transition-transform duration-1000"
+                  className="text-4xl hover:scale-125 transition-transform duration-1000"
                   icon={faChevronRight}
                 />
               </button>
             </div>
-            <div className="w-full flex flex-col items-center mt-12">
-              <div className="max-w-xl text-center">
-                <div className="text-blue-700 font-bold text-base md:text-lg mb-2">
+            <div className="w-full flex flex-col items-center mt-6">
+              <div className="max-w-md text-center">
+                <div className="text-blue-700 font-bold text-sm md:text-base mb-1">
                   {centerItem.name}
                 </div>
-                <p className="text-gray-700 text-base md:text-lg ">
+                <p className="text-gray-700 text-sm md:text-base ">
                   “{centerItem.review}”
                 </p>
               </div>

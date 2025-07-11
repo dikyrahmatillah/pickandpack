@@ -27,10 +27,10 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="w-full px-4 md:px-10 lg:px-28">
-      <div className="w-full h-[calc(100vh-6rem)] min-h-[32rem] flex flex-col items-center sm:gap-8 lg:grid lg:grid-cols-2 lg:gap-0">
+    <section className="w-full px-2 sm:px-4 md:px-8 lg:px-16 pt-25 md:pt-30 mb-30 lg:mb-50">
+      <div className="w-full min-h-[60vh] flex flex-col items-center gap-10 lg:grid lg:grid-cols-2 lg:gap-0">
         {/* Hero Text */}
-        <div className="w-full h-full flex flex-col justify-center items-center text-center sm:mb-6 lg:mb-0 pr-0 lg:pr-16 lg:items-end lg:text-left">
+        <div className="w-full flex flex-col justify-center items-center text-center mb-6 sm:mb-8 lg:mb-0 px-5 lg:pr-10 lg:items-end lg:text-left">
           <AnimatePresence mode="wait">
             <motion.div
               key={current}
@@ -38,9 +38,9 @@ export default function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -40 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
-              className="space-y-6"
+              className="space-y-4 max-w-xl mx-auto"
             >
-              <h1 className="sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-black leading-tight tracking-tight text-neutral-900 drop-shadow-xl">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight tracking-tight text-neutral-900 drop-shadow-xl">
                 {hero_content[current].title}
                 <br />
                 {hero_content[current].highlight && (
@@ -77,7 +77,7 @@ export default function HeroSection() {
         </div>
         {/* Carousel Box */}
         <div className="w-full flex justify-center">
-          <div className="relative w-full max-w-[32rem] sm:max-w-[40rem] md:max-w-[48rem] lg:max-w-[56rem] xl:max-w-[62rem] aspect-square overflow-hidden rounded-2xl border border-gray-200 shadow-lg bg-white">
+          <div className="relative w-full max-w-[26rem] sm:max-w-[32rem] md:max-w-[38rem] lg:max-w-[44rem] xl:max-w-[52rem] aspect-square overflow-hidden rounded-2xl border border-gray-200 shadow-lg bg-white">
             {/* Navigation Buttons - left */}
             <button
               onClick={prevSlide}
@@ -113,7 +113,7 @@ export default function HeroSection() {
                     src={hero_content[current].image}
                     alt="Hero Slide"
                     fill
-                    className="object-contain transition-transform duration-5000 ease-out hover:scale-110"
+                    className="object-cover transition-transform duration-5000 ease-out hover:scale-110"
                     priority
                   />
                 </motion.div>

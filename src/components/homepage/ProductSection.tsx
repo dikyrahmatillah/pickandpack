@@ -87,7 +87,7 @@ export default function ProductSection() {
               style={{ borderRadius: "inherit" }}
             />
           </div>
-          <h3 className="text-2xl font-bold text-neutral-900 mb-2 tracking-wide uppercase transition-colors duration-300 hover:text-neutral-700">
+          <h3 className="text-xl font-bold text-neutral-900 my-3 tracking-wide uppercase transition-colors duration-300 hover:text-neutral-700">
             {prod.name}
           </h3>
           <p className="text-base text-neutral-700 mb-4">{prod.utility}</p>
@@ -99,11 +99,8 @@ export default function ProductSection() {
   };
 
   return (
-    <section className="w-full py-20 mt-30 mx-auto flex justify-end">
-      <div
-        className="w-full flex flex-col items-start"
-        style={{ width: "75vw", maxWidth: "100vw" }}
-      >
+    <section className="w-full py-4 mt-8 mx-auto flex justify-end">
+      <div className="w-3/4 flex flex-col items-start">
         {/* name and filter */}
         <motion.div
           className="flex flex-col"
@@ -112,14 +109,14 @@ export default function ProductSection() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.5 }}
         >
-          <h2 className="mb-2 font-bold tracking-tight text-neutral-900 text-4xl sm:text-5xl">
+          <h2 className="mb-1 font-bold tracking-tight text-neutral-900 text-xl sm:text-2xl">
             Produk Kami:
           </h2>
-          <div className="flex items-center gap-4 mb-12">
-            <span className="text-neutral-500 text-lg underline underline-offset-4">
-              hot products:
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-neutral-500 text-sm underline underline-offset-4">
+              Produck baru:
             </span>
-            <span className="text-neutral-700 font-bold text-lg">
+            <span className="text-neutral-700 font-bold text-sm">
               {products.length}
             </span>
           </div>
@@ -127,38 +124,38 @@ export default function ProductSection() {
 
         {/* Carousel */}
         <div className="flex justify-end w-full">
-          <div className="relative overflow-hidden">
+          <div className="relative overflow-hidden min-h-[800px] h-[800px]">
+            {/* Set fixed height here */}
             <motion.div
               key={start}
-              className="flex gap-8 md:gap-12 max-w-full md:max-w-[calc(100vw-10rem)] justify-end"
+              className="flex gap-2 md:gap-4 max-w-full md:max-w-[calc(100vw-6rem)] justify-end h-full" // Ensure children stretch to full height
             >
               {/* 1 image on mobile */}
-              <div className="sm:hidden flex gap-8">
-                {renderProductItems(getVisibleCount("mobile"), "")}
+              <div className="sm:hidden flex gap-2 h-full">
+                {renderProductItems(getVisibleCount("mobile"), "h-full")}
               </div>
 
               {/* 2 images on sm */}
-              <div className="hidden sm:flex lg:hidden gap-8">
-                {renderProductItems(getVisibleCount("sm"), "")}
+              <div className="hidden sm:flex lg:hidden gap-2 h-full">
+                {renderProductItems(getVisibleCount("sm"), "h-full")}
               </div>
 
               {/* 3 images on lg */}
-              <div className="hidden lg:flex xl:hidden gap-8">
-                {renderProductItems(getVisibleCount("lg"), "")}
+              <div className="hidden lg:flex xl:hidden gap-2 h-full">
+                {renderProductItems(getVisibleCount("lg"), "h-full")}
               </div>
 
               {/* 4 images on xl */}
-              <div className="hidden xl:flex gap-8">
-                {renderProductItems(getVisibleCount("xl"), "")}
+              <div className="hidden xl:flex gap-2 h-full">
+                {renderProductItems(getVisibleCount("xl"), "h-full")}
               </div>
             </motion.div>
-
             {/* Right Arrow */}
             <motion.button
               onClick={handleNext}
               aria-label="Next"
               disabled={isTransitioning}
-              className="absolute right-[-0.1rem] top-1/4 -translate-y-1/2 w-14 h-14 rounded-l-lg bg-white border border-neutral-300 shadow flex items-center justify-center text-3xl text-neutral-700 hover:bg-neutral-100 transition-all duration-300 ease-out hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed z-1010"
+              className="absolute right-[-0.1rem] top-1/4 -translate-y-1/2 w-8 h-8 rounded-l-lg bg-white border border-neutral-300 shadow flex items-center justify-center text-xl text-neutral-700 hover:bg-neutral-100 transition-all duration-300 ease-out hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed z-10"
               style={{ boxShadow: "0 2px 8px 0 rgba(0,0,0,0.07)" }}
               whileTap={{ scale: 0.95 }}
             >

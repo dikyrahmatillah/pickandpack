@@ -38,7 +38,7 @@ export default function PhilosophySection() {
   return (
     <motion.section
       ref={ref}
-      className="py-20 bg-white"
+      className="py-10 bg-white"
       initial="hidden"
       animate={controls}
       variants={{
@@ -51,22 +51,22 @@ export default function PhilosophySection() {
         },
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 mt-20 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 ">
+      <div className="max-w-5xl mx-auto px-2 mt-10 sm:px-4 lg:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Text Content */}
           <motion.div
-            className="space-y-6"
+            className="space-y-4"
             variants={cardVariants}
             initial="hidden"
             animate={controls}
           >
-            <h2 className="text-3xl md:text-7xl font-bold text-gray-900">
+            <h2 className="text-2xl md:text-5xl font-bold text-gray-900">
               PHILOSOPHY
             </h2>
 
             <Link
               href="/about-us"
-              className="font-medium text-lg transition-all duration-300 transform hover:scale-105"
+              className="font-medium text-base transition-all duration-300 transform hover:scale-105"
             >
               about us
               <FontAwesomeIcon icon={faChevronRight} />
@@ -79,14 +79,14 @@ export default function PhilosophySection() {
             initial="hidden"
             animate={controls}
           >
-            <div className="bg-gradient-to-br from-green-100 to-blue-100 rounded-3xl p-8 h-96 flex items-center justify-center">
+            <div className="bg-gradient-to-br from-green-100 to-blue-100 rounded-3xl p-6 h-72 flex items-center justify-center">
               {/* Ocean and Tea Visualization */}
-              <div className="text-center space-y-6">
-                <div className="space-y-2">
-                  <div className="text-3xl font-bold text-gray-800">
+              <div className="text-center space-y-4">
+                <div className="space-y-1">
+                  <div className="text-xl font-bold text-gray-800">
                     Let&apos;s make the box.
                   </div>
-                  <div className="text-lg text-gray-600">
+                  <div className="text-sm text-gray-600">
                     Our pick and pack philosophy is rooted in precision, care,
                     and efficiency. We meticulously select and package every
                     order to ensure quality and satisfaction, delivering
