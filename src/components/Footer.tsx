@@ -27,17 +27,14 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">SHOP</h3>
             <ul className="space-y-6">
               <li>
-                <Link
-                  href="/"
-                  className="text-gray-800 hover:text-white transition-colors"
-                >
+                <Link href="/" className="text-gray-800 transition-colors">
                   home
                 </Link>
               </li>
               <li>
                 <Link
                   href="/products"
-                  className="text-gray-800 hover:text-white transition-colors"
+                  className="text-gray-800 transition-colors"
                 >
                   products
                 </Link>
@@ -45,7 +42,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/top-sales"
-                  className="text-gray-800 hover:text-white transition-colors"
+                  className="text-gray-800 transition-colors"
                 >
                   top sales
                 </Link>
@@ -53,16 +50,13 @@ export default function Footer() {
               <li>
                 <Link
                   href="/premium-tea"
-                  className="text-gray-800 hover:text-white transition-colors"
+                  className="text-gray-800 transition-colors"
                 >
                   premium tea
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/set"
-                  className="text-gray-800 hover:text-white transition-colors"
-                >
+                <Link href="/set" className="text-gray-800 transition-colors">
                   set
                 </Link>
               </li>
@@ -82,7 +76,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/delivery"
-                  className="text-gray-800 hover:text-white transition-colors"
+                  className="text-gray-800 transition-colors"
                 >
                   delivery
                 </Link>
@@ -90,7 +84,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/returns-exchanges"
-                  className="text-gray-800 hover:text-white transition-colors"
+                  className="text-gray-800 transition-colors"
                 >
                   returns and exchanges
                 </Link>
@@ -98,7 +92,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/terms-and-conditions"
-                  className="text-gray-800 hover:text-white transition-colors"
+                  className="text-gray-800 transition-colors"
                 >
                   terms and conditions
                 </Link>
@@ -106,7 +100,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/privacy-policy"
-                  className="text-gray-800 hover:text-white transition-colors"
+                  className="text-gray-800 transition-colors"
                 >
                   privacy policy
                 </Link>
@@ -127,7 +121,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/about-us"
-                  className="text-gray-800 hover:text-white transition-colors"
+                  className="text-gray-800 transition-colors"
                 >
                   about us
                 </Link>
@@ -135,7 +129,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/contacts"
-                  className="text-gray-800 hover:text-white transition-colors"
+                  className="text-gray-800 transition-colors"
                 >
                   contacts
                 </Link>
@@ -143,7 +137,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/journal"
-                  className="text-gray-800 hover:text-white transition-colors"
+                  className="text-gray-800 transition-colors"
                 >
                   journal
                 </Link>
@@ -204,7 +198,7 @@ export default function Footer() {
                 href="https://www.instagram.com/pickandpack_id/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-800 hover:text-white transition-colors"
+                className="text-gray-800 transition-colors"
                 whileHover={{ scale: 1.08, color: "#22c55e" }}
                 transition={{ type: "spring", stiffness: 300 }}
               >

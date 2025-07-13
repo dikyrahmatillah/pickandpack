@@ -38,7 +38,10 @@ export default function ProductInfo({ product }: { product: Product }) {
       <div className="text-lg sm:text-2xl mb-6">{product.description}</div>
       <div className="flex flex-wrap gap-3 mb-8"></div>
       <div className="flex items-center gap-6 mb-4">
-        <button className="bg-black text-white border-none rounded-4xl px-8 sm:px-16 py-4 sm:py-6 text-lg sm:text-[22px] font-bold flex items-center gap-4 cursor-pointer">
+        <button
+          data-cursor="white"
+          className="bg-black text-white border-none rounded-4xl px-8 sm:px-16 py-4 sm:py-6 text-lg sm:text-[22px] font-bold flex items-center gap-4 cursor-pointer"
+        >
           <span className="text-2xl">🛒</span> Hubungi Kami
         </button>
       </div>

@@ -3,10 +3,10 @@ export async function fetchUrl(
   query: string = "",
   options?: RequestInit
 ) {
-  const res = await fetch(
-    `https://headwheel-us.backendless.app/api/data/${endpoint}${query}`,
-    options
-  );
+  const baseUrl =
+    process.env.BACKENDLESS_BASE_URL ||
+    "https://headwheel-us.backendless.app/api/data/";
+  const res = await fetch(`${baseUrl}${endpoint}${query}`, options);
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new Error(

@@ -100,7 +100,6 @@ const BoxCursor: React.FC = () => {
           ...baseStyles,
           width: active ? "44px" : "22px",
           height: active ? "44px" : "22px",
-          background: active ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.15)",
           border: "2px solid rgba(255,255,255,0.95)",
           borderRadius: active ? "12px" : "7px",
           mixBlendMode: "normal" as const,

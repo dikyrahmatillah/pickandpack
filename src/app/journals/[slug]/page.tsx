@@ -1,7 +1,82 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { fetchUrl } from "@/utils/fetchUrl";
+
+type Props = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+
+  try {
+    const data = await fetchUrl("journals", `?where=slug='${slug}'`);
+
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      return {
+        title: "Article Not Found",
+        description: "The requested article could not be found.",
+      };
+    }
+
+    const journal = data[0];
+
+    // Create a clean description from content (strip HTML and limit length)
+    const cleanDescription =
+      journal.content?.replace(/<[^>]*>/g, "").substring(0, 160) + "...";
+
+    const imageUrl = journal.coverImage || "/images/hero/hero-2.webp";
+
+    return {
+      title: journal.title,
+      description: cleanDescription,
+      keywords: [
+        journal.title,
+        "packaging design",
+        "design insights",
+        "Pick & Pack journal",
+        "packaging trends",
+        "design article",
+        ...(journal.tags
+          ? journal.tags.split(",").map((tag: string) => tag.trim())
+          : []),
+      ],
+      authors: [{ name: journal.createdBy || "Pick & Pack Team" }],
+      openGraph: {
+        title: `${journal.title} - Pick & Pack Journal`,
+        description: cleanDescription,
+        url: `https://pickandpack.vercel.app/journals/${slug}`,
+        type: "article",
+        publishedTime: journal.publishDate,
+        authors: [journal.createdBy || "Pick & Pack Team"],
+        images: [
+          {
+            url: imageUrl,
+            width: 1200,
+            height: 630,
+            alt: journal.title,
+          },
+        ],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: `${journal.title} - TeaFlow Journal`,
+        description: cleanDescription,
+        images: [imageUrl],
+      },
+      alternates: {
+        canonical: `https://teaflow.vercel.app/journals/${slug}`,
+      },
+    };
+  } catch {
+    return {
+      title: "Article Not Found",
+      description: "The requested article could not be found.",
+    };
+  }
+}
 
 interface JournalDetail {
   title: string;

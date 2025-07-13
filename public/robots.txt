@@ -1,0 +1,23 @@
+# Robots.txt for Pick & Pack
+# https://pickandpack.vercel.app/robots.txt
+
+User-agent: *
+Allow: /
+
+# Disallow dashboard and admin areas
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /login
+
+# Allow specific public paths
+Allow: /
+Allow: /about-us
+Allow: /products
+Allow: /team
+Allow: /journals
+
+# Crawl delay for bots (optional)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://pickandpack.vercel.app/sitemap.xml
