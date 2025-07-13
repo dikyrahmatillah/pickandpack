@@ -61,7 +61,7 @@ export default function TestimonialsSection() {
             <button
               aria-label="Previous"
               onClick={() => handleMove(-1)}
-              className="absolute left-0 sm:left-1/3 top-1/2 -translate-y-1/2 z-20"
+              className="absolute left-0 sm:left-1/3 top-1/2 -translate-y-1/2 z-20 cursor-pointer"
             >
               <FontAwesomeIcon
                 className="text-4xl hover:scale-125 transition-transform duration-1000"
@@ -114,7 +114,7 @@ export default function TestimonialsSection() {
               className="absolute right-0 sm:right-1/3 top-1/2 -translate-y-1/2 z-20"
             >
               <FontAwesomeIcon
-                className="text-4xl hover:scale-125 transition-transform duration-1000"
+                className="text-4xl hover:scale-125 transition-transform duration-1000 cursor-pointer"
                 icon={faChevronRight}
               />
             </button>

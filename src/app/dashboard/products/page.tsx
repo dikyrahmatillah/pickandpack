@@ -318,7 +318,7 @@ export default function ProductsPage() {
           {hasMore && (
             <div className="mt-8 text-center">
               <button
-                className="px-4 py-2 border border-gray-300 rounded-none text-gray-600 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-none text-gray-600 hover:bg-gray-50 cursor-pointer"
                 onClick={handleLoadMore}
                 disabled={loading}
               >
