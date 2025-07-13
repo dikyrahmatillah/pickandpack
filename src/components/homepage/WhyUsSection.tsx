@@ -27,7 +27,7 @@ export default function WhyUsSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            MENGAPA HARUS PICKANDPACK
+            MENGAPA HARUS PICK & PACK
           </motion.h2>
         </motion.div>
 
@@ -39,13 +39,10 @@ export default function WhyUsSection() {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{
-                duration: 0.5,
-                delay: index * 0.1,
-              }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
               whileHover={{
                 y: -5,
-                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+                boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1)",
               }}
             >
               <div
@@ -53,11 +50,9 @@ export default function WhyUsSection() {
               >
                 #{index + 1}
               </div>
-
               <h3 className="text-base font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">
                 {flow.title}
               </h3>
-
               <p className="text-sm text-gray-600 leading-relaxed">
                 {flow.description}
               </p>

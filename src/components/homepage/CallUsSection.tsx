@@ -10,9 +10,7 @@ export default function CallUsSection() {
   const inView = useInView(sectionRef, { amount: 0.5, once: true });
 
   useEffect(() => {
-    if (inView) {
-      controls.start("visible");
-    }
+    if (inView) controls.start("visible");
   }, [inView, controls]);
 
   return (
@@ -31,8 +29,6 @@ export default function CallUsSection() {
       className="mt-24 text-center bg-gray-100 rounded-none sm:rounded-[4rem] px-2 sm:px-6 md:px-12 py-10 md:py-20 text-black w-full mx-auto flex flex-col items-center overflow-x-hidden"
     >
       <motion.div
-        initial="hidden"
-        animate={controls}
         variants={{
           hidden: { opacity: 0, y: 40 },
           visible: {

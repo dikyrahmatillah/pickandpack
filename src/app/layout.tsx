@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "../components/Header";
+import Header from "../components/header/Header";
 import Footer from "../components/Footer";
 import { AuthProvider } from "@/providers/AuthProvider";
-import BoxCursor from "@/components/cursor/cursor";
+import BoxCursor from "@/components/cursor/Cursor";
 
 const inter = Inter({
   subsets: ["latin"],

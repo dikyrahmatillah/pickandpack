@@ -18,7 +18,15 @@ export default function DashboardSidebar() {
     session.user.role === "admin" || session.user.role === "editor";
 
   return (
-    <aside className="w-64  pt-20 md:pt-40 bg-white h-full shadow-md fixed left-0 top-0 overflow-y-auto">
+    <aside className="w-64  bg-white h-full shadow-md fixed left-0 top-0 overflow-y-auto">
+      {/* Logo */}
+      <div className="border-b">
+        <Link href="/dashboard" className="grid place-items-center">
+          <span className="whitespace-nowrap text-md sm:text-xl tracking-[0.3em] font-extrabold text-gray-900 select-none py-4 md:py-6">
+            PICK & PACK
+          </span>
+        </Link>
+      </div>
       {/* User profile */}
       <div className="p-6 border-b">
         <div className="flex items-center">
@@ -181,7 +189,7 @@ export default function DashboardSidebar() {
               <li>
                 <Link
                   href="/admin/users"
-                  className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-none"
+                  className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-none disabled-link"
                 >
                   <svg
                     className="w-5 h-5 mr-3"
@@ -203,7 +211,7 @@ export default function DashboardSidebar() {
               <li>
                 <Link
                   href="/admin/settings"
-                  className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-none"
+                  className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-none disabled-link"
                 >
                   <svg
                     className="w-5 h-5 mr-3"
@@ -237,7 +245,7 @@ export default function DashboardSidebar() {
       <div className="p-4 border-t mt-auto">
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
-          className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-none w-full"
+          className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-none w-full cursor-pointer"
         >
           <svg
             className="w-5 h-5 mr-3"

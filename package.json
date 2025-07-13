@@ -13,15 +13,20 @@
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@hookform/resolvers": "^5.1.1",
+    "@tailwindcss/typography": "^0.5.16",
     "backendless": "^7.4.6",
     "bcrypt": "^6.0.0",
-    "framer-motion": "^12.23.0",
+    "framer-motion": "^12.23.3",
     "next": "15.3.5",
     "next-auth": "^5.0.0-beta.29",
     "quill": "^2.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-markdown": "^10.1.0"
+    "react-hook-form": "^7.60.0",
+    "react-markdown": "^10.1.0",
+    "react-toastify": "^11.0.5",
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

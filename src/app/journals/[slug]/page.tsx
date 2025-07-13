@@ -1,10 +1,45 @@
 import Link from "next/link";
 import Image from "next/image";
-import journalDetail from "@/data/journalDetail";
+import { notFound } from "next/navigation";
+import { fetchUrl } from "@/utils/fetchUrl";
 
-export default function JournalDetailPage() {
+interface JournalDetail {
+  title: string;
+  content: string;
+  coverImage: string;
+  createdBy: string;
+  publishDate: string;
+  tags?: string[];
+  minutesRead?: number;
+}
+
+export default async function JournalDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const data = await fetchUrl("journals", `?where=slug='${slug}'`);
+
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    notFound();
+  }
+
+  const journalDetailRaw = data[0];
+
+  // Convert tags from comma-separated string to array
+  const journalDetail: JournalDetail = {
+    ...journalDetailRaw,
+    tags: journalDetailRaw.tags
+      ? journalDetailRaw.tags
+          .split(",")
+          .map((t: string) => t.trim())
+          .filter(Boolean)
+      : [],
+  };
+
   return (
-    <main className="px-4 sm:px-8 md:px-28 py-8 pt-30 md:pt-50">
+    <main className="max-w-6xl mx-auto px-4 sm:px-8 md:px-28 py-8 pt-10 md:pt-30">
       <nav className="mb-8 text-gray-500 text-sm">
         <Link href="/" className="hover:underline">
           Home
@@ -19,11 +54,11 @@ export default function JournalDetailPage() {
         </span>
       </nav>
 
-      <article className="max-w-4xl mx-auto bg-white rounded-2xl overflow-hidden shadow-lg">
+      <article className="w-full bg-white rounded-2xl overflow-hidden shadow-lg">
         {/* Featured Image */}
         <div className="relative w-full h-[300px] md:h-[400px]">
           <Image
-            src={journalDetail.image}
+            src={journalDetail.coverImage}
             alt={journalDetail.title}
             fill
             className="object-cover"
@@ -41,34 +76,66 @@ export default function JournalDetailPage() {
         {/* Article Metadata */}
         <div className="px-6 md:px-10 py-6 border-b flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center text-white text-xl font-bold">
-            {journalDetail.author.charAt(0)}
+            {journalDetail.createdBy?.charAt(0) ?? "?"}
           </div>
           <div>
             <div className="font-medium text-gray-900">
-              {journalDetail.author}
+              {journalDetail.createdBy}
             </div>
-            <div className="text-gray-500 text-sm">{journalDetail.date}</div>
+            <div className="text-gray-500 text-sm flex gap-2 items-center">
+              <span>
+                Published{" "}
+                {new Date(journalDetail.publishDate).toLocaleDateString(
+                  "id-ID",
+                  {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  }
+                )}
+              </span>
+              {journalDetail.minutesRead && (
+                <>
+                  <span>•</span>
+                  <span>{journalDetail.minutesRead} min read</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Article Content */}
-        <div className="px-6 md:px-10 py-8">
-          <div className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-strong:text-gray-900 text-lg">
-            {journalDetail.content}
-          </div>
-
+        <div className="w-full px-6 md:px-10 py-8">
+          <div
+            className="w-full text-gray-900 leading-relaxed
+              [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:break-words [&_h1]:hyphens-auto [&_h1]:max-w-full
+              [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:break-words [&_h2]:hyphens-auto [&_h2]:max-w-full
+              [&_h3]:text-xl [&_h3]:font-bold [&_h3]:mb-2 [&_h3]:break-words [&_h3]:hyphens-auto [&_h3]:max-w-full
+              [&_h4]:text-lg [&_h4]:font-bold [&_h4]:mb-2 [&_h4]:break-words [&_h4]:hyphens-auto [&_h4]:max-w-full
+              [&_h5]:text-base [&_h5]:font-bold [&_h5]:mb-2 [&_h5]:break-words [&_h5]:hyphens-auto [&_h5]:max-w-full
+              [&_h6]:text-sm [&_h6]:font-bold [&_h6]:mb-2 [&_h6]:break-words [&_h6]:hyphens-auto [&_h6]:max-w-full
+              [&_p]:mb-4 [&_p]:leading-relaxed [&_p]:break-words [&_p]:hyphens-auto [&_p]:max-w-full
+              [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4
+              [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:mb-4
+              [&_li]:mb-1
+              [&_strong]:font-bold
+              [&_em]:italic
+              [&_img]:rounded-lg [&_img]:shadow-md [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto"
+            dangerouslySetInnerHTML={{ __html: journalDetail.content }}
+          />
           {/* Tags */}
-          <div className="mt-10 pt-6 border-t flex flex-wrap gap-2">
-            <span className="text-sm bg-gray-100 px-3 py-1 rounded-full text-gray-700">
-              Teh
-            </span>
-            <span className="text-sm bg-gray-100 px-3 py-1 rounded-full text-gray-700">
-              Chaban
-            </span>
-            <span className="text-sm bg-gray-100 px-3 py-1 rounded-full text-gray-700">
-              Perlengkapan Teh
-            </span>
-          </div>
+          {journalDetail.tags && journalDetail.tags.length > 0 && (
+            <div className="mt-10 pt-6 border-t flex flex-wrap gap-2">
+              {journalDetail.tags.map((tag, idx) => (
+                <span
+                  key={idx}
+                  className="text-sm bg-gray-100 px-3 py-1 rounded-full text-gray-700"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
 
           {/* Navigation */}
           <div className="mt-10 pt-6 border-t">

@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { fetchUrl } from "@/utils/fetchUrl";
 
 export default function CreateProductPage() {
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -49,18 +51,11 @@ export default function CreateProductPage() {
         images: JSON.stringify(formData.images.filter(Boolean)),
       };
 
-      const res = await fetch(
-        "https://headwheel-us.backendless.app/api/data/products",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      if (!res.ok) {
-        throw new Error("Failed to create product");
-      }
+      await fetchUrl("products", "", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
       alert("Product created successfully!");
       router.push("/dashboard/products");
@@ -72,9 +67,70 @@ export default function CreateProductPage() {
   };
 
   return (
-    <main className="px-4 sm:px-8 md:px-28 py-8 pt-30 md:pt-50">
-      <DashboardSidebar />
-      <div className="flex-1 ml-64 p-8">
+    <main className="min-h-screen mt-20 ">
+      {/* Mobile Sidebar Toggle Button */}
+      <button
+        className="fixed bottom-4 left-4 z-30 p-2 bg-white rounded-md shadow md:hidden"
+        onClick={() => setSidebarOpen(true)}
+        aria-label="Open sidebar"
+      >
+        {/* Hamburger Icon */}
+        <svg
+          className="w-6 h-6 text-gray-700"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+
+      {/* Sidebar for desktop */}
+      <div className="hidden md:block">
+        <DashboardSidebar />
+      </div>
+
+      {/* Sidebar overlay for mobile */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-40 flex md:hidden">
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-30"
+            onClick={() => setSidebarOpen(false)}
+          />
+          {/* Sidebar */}
+          <aside className="relative w-64 bg-white h-full shadow-md z-50">
+            <button
+              className="absolute top-4 right-4 p-2"
+              onClick={() => setSidebarOpen(false)}
+              aria-label="Close sidebar"
+            >
+              <svg
+                className="w-6 h-6 text-gray-700"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <DashboardSidebar />
+          </aside>
+        </div>
+      )}
+
+      {/* Main content area */}
+      <div className="md:ml-64 p-4 md:p-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Create New Product
@@ -229,7 +285,7 @@ export default function CreateProductPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-4 text-md text-white bg-blue-600 rounded-none hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-6 py-4 text-md text-white bg-blue-600 rounded-none hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
                 {isSubmitting ? "Creating..." : "Create Product"}
               </button>

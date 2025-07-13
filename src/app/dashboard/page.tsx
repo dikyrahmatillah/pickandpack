@@ -9,24 +9,21 @@ import { RoleGuard } from "@/components/auth/RoleGuard";
 export default function DashboardPage() {
   const { data: session } = useSession();
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalJournals: 0,
     totalUsers: 0,
   });
 
-  // Redirect viewers to their specialized dashboard
   useEffect(() => {
     if (session?.user?.role === "viewer") {
       router.push("/dashboard/viewer");
     }
   }, [session, router]);
 
-  // In a real app, you would fetch actual stats from your API
   useEffect(() => {
-    // Simulating API fetch
     const fetchStats = async () => {
-      // For demo purposes only - in production, call a real API
       setStats({
         totalProducts: 24,
         totalJournals: 8,
@@ -39,10 +36,70 @@ export default function DashboardPage() {
 
   return (
     <RoleGuard>
-      <main className="px-4 sm:px-8 md:px-28 py-8 pt-30 md:pt-50">
-        <DashboardSidebar />
+      <main className="min-h-screen mt-20">
+        {/* Mobile Sidebar Toggle Button */}
+        <button
+          className="fixed bottom-4 left-4 z-30 p-2 bg-white rounded-md shadow md:hidden cursor-pointer"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open sidebar"
+        >
+          {/* Hamburger Icon */}
+          <svg
+            className="w-6 h-6 text-gray-700"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
 
-        <div className="flex-1 ml-64 p-8">
+        {/* Sidebar for desktop */}
+        <div className="hidden md:block">
+          <DashboardSidebar />
+        </div>
+
+        {/* Sidebar overlay for mobile */}
+        {sidebarOpen && (
+          <div className="fixed inset-0 z-40 flex md:hidden">
+            {/* Overlay */}
+            <div
+              className="fixed inset-0 bg-black bg-opacity-30"
+              onClick={() => setSidebarOpen(false)}
+            />
+            {/* Sidebar */}
+            <aside className="relative w-64 bg-white h-full shadow-md z-50">
+              <button
+                className="absolute top-4 right-4 p-2"
+                onClick={() => setSidebarOpen(false)}
+                aria-label="Close sidebar"
+              >
+                <svg
+                  className="w-6 h-6 text-gray-700"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+              <DashboardSidebar />
+            </aside>
+          </div>
+        )}
+
+        {/* Responsive main content area */}
+        <div className="flex-1 p-4 md:p-8 md:ml-64">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
             <p className="text-gray-600">

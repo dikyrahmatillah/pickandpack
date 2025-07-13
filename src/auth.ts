@@ -36,16 +36,36 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!credentials?.email || !credentials?.password) return null;
         try {
           const res = await fetch(
-            `http://localhost:3000/api/user?email=${credentials.email}`
+            `https://headwheel-us.backendless.app/api/data/user?where=email%3D'${credentials.email}'`,
+            {
+              cache: "no-store",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
           );
 
-          if (!res.ok) throw new Error("Login failed");
+          if (!res.ok) {
+            const errorText = await res.text();
+            console.error("API Error:", errorText);
+            throw new Error("Login failed");
+          }
 
-          const user = await res.json();
-          if (!user || !user.password) {
-            console.error("User not found or password missing");
+          const users = await res.json();
+          console.log("Fetched users data:", users);
+
+          const user = Array.isArray(users) ? users[0] : users;
+
+          if (!user) {
+            console.error("User not found");
             return null;
           }
+
+          if (user.password !== credentials.password) {
+            console.error("Password mismatch");
+            return null;
+          }
+
           return user;
         } catch (error) {
           console.error("Error during login:", error);

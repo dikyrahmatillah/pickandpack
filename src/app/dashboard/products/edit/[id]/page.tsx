@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import { EditorGuard } from "@/components/auth/RoleGuard";
 import Link from "next/link";
+import { fetchUrl } from "@/utils/fetchUrl";
 
 type ProductType = {
   objectId: string;
@@ -45,15 +46,11 @@ export default function EditProductPage() {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const res = await fetch(
-          `https://headwheel-us.backendless.app/api/data/products/${productId}`
-        );
-        if (!res.ok) throw new Error("Product not found");
-        const data = await res.json();
+        const data = await fetchUrl(`products/${productId}`);
         setFormData({
           ...data,
         });
-      } catch (error) {
+      } catch {
         alert("Failed to fetch product data.");
         router.push("/dashboard/products");
       } finally {
@@ -91,21 +88,15 @@ export default function EditProductPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const payload = {
-        ...formData,
-      };
-      const res = await fetch(
-        `https://headwheel-us.backendless.app/api/data/products/${productId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
-      if (!res.ok) throw new Error("Failed to update product");
+      const payload = { ...formData };
+      await fetchUrl(`products/${productId}`, "", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
       alert("Product updated successfully!");
       router.push("/dashboard/products");
-    } catch (error) {
+    } catch {
       alert("Failed to update product. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -314,14 +305,14 @@ export default function EditProductPage() {
               <div className="flex justify-end space-x-2">
                 <Link
                   href="/dashboard/products"
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-none hover:bg-gray-50"
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-none hover:bg-gray-50 cursor-pointer"
                 >
                   Cancel
                 </Link>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-none hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-400"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-none hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-400 cursor-pointer"
                 >
                   {isSubmitting ? "Saving..." : "Save Changes"}
                 </button>

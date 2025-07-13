@@ -22,9 +22,7 @@ export default function FollowUsSection() {
   const inView = useInView(sectionRef, { amount: 0.75, once: true });
 
   useEffect(() => {
-    if (inView) {
-      controls.start("visible");
-    }
+    if (inView) controls.start("visible");
   }, [inView, controls]);
 
   return (
@@ -32,6 +30,14 @@ export default function FollowUsSection() {
       ref={sectionRef}
       initial="hidden"
       animate={controls}
+      variants={{
+        hidden: { opacity: 0, y: 40 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.7, ease: "easeOut" },
+        },
+      }}
       className="w-full py-6 mt-10 sm:py-10 md:py-14 bg-white pr-0 sm:pr-4 md:pr-10 overflow-x-hidden"
     >
       <div className="flex flex-col items-start w-3/4">
@@ -39,30 +45,20 @@ export default function FollowUsSection() {
           FOLLOW US
         </h2>
         <div className="relative flex items-start w-full">
-          <div
-            className="
-              flex flex-col sm:flex-row-reverse items-start gap-2 sm:gap-4 w-full
-              overflow-hidden
-              sm:ml-0
-            "
-          >
-            {/* Show only the first image on mobile */}
+          <div className="flex flex-col sm:flex-row-reverse items-start gap-2 sm:gap-4 w-full overflow-hidden sm:ml-0">
             <div className="block sm:hidden w-full">
               <motion.div
                 className="overflow-hidden shadow-lg rounded-2xl"
-                style={{
-                  width: "100%",
-                  maxWidth: "320px",
-                  aspectRatio: "1/1",
-                  zIndex: images.length,
+                style={{ maxWidth: 320, aspectRatio: "1/1" }}
+                variants={{
+                  hidden: { opacity: 0, y: 40 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.7, ease: "easeOut" },
+                  },
                 }}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={
-                  inView
-                    ? { opacity: 1, scale: 1 }
-                    : { opacity: 0, scale: 0.95 }
-                }
-                transition={{ duration: 0.7, ease: "easeOut" }}
+                animate={controls}
               >
                 <Link
                   href="https://www.instagram.com/pickandpack_id/"
@@ -81,7 +77,6 @@ export default function FollowUsSection() {
                 </Link>
               </motion.div>
             </div>
-            {/* Show all images on sm and up */}
             <div className="hidden sm:flex flex-row-reverse items-start gap-4 w-full">
               {images.map((img, i) => (
                 <motion.div
@@ -90,20 +85,24 @@ export default function FollowUsSection() {
                     i === 0 ? "rounded-2xl sm:rounded-3xl" : "rounded-none"
                   } group`}
                   style={{
-                    width: "100%",
-                    maxWidth: "320px",
+                    maxWidth: 320,
                     aspectRatio: "1/1",
                     zIndex: images.length - i,
                   }}
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={
-                    inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }
-                  }
-                  transition={{
-                    duration: 0.7,
-                    delay: i * 0.1,
-                    ease: "easeOut",
+                  variants={{
+                    hidden: { opacity: 0, y: 40 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: {
+                        duration: 0.7,
+                        delay: i * 0.1,
+                        ease: "easeOut",
+                      },
+                    },
                   }}
+                  initial="hidden"
+                  animate={controls}
                 >
                   <Link
                     href="https://www.instagram.com/pickandpack_id/"

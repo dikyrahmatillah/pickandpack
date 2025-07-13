@@ -4,44 +4,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { partners } from "@/data/partners";
+import styles from "./PartnerSection.module.css";
 
 export default function PartnerSection() {
-  const categories = [
-    "atmos",
-    "barkerman",
-    "beauty-haul",
-    "chigo",
-    "eatlah",
-    "fred-ferry",
-    "gojek",
-    "grab-food",
-    "howel-and-co",
-    "jiwa-toast",
-    "keds",
-    "kopi-kenangan",
-    "limau",
-    "l-occitane",
-    "moon-chicken",
-    "nike",
-    "optik-seis",
-    "pezzo",
-    "pizza-birra",
-    "quiksilver",
-    "social-affair",
-    "sociolla",
-    "superga",
-    "sushi-hiro",
-    "the-north-face",
-    "timberland",
-    "whitelab",
-  ];
-
-  // Duplicate for seamless marquee
-  const animatedCategories = [...categories, ...categories];
+  const animatedCategories = [...partners, ...partners];
   const [marquee, setMarquee] = useState(false);
 
   return (
-    <motion.div
+    <motion.section
       initial={{ opacity: 0, y: 60 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: "easeOut" }}
@@ -54,17 +25,15 @@ export default function PartnerSection() {
       </h3>
       <div className="overflow-hidden w-full">
         <div
-          className="flex gap-10"
-          style={{
-            minWidth: "max-content",
-            animation: marquee ? "marquee 60s linear infinite" : undefined,
-          }}
+          className={`flex gap-10 min-w-[max-content] ${
+            marquee ? styles.marquee : ""
+          }`}
         >
           {animatedCategories.map((category, idx) => {
-            // Convert category name to filename (lowercase, spaces and & replaced with -)
-            const filename =
-              category.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "and") +
-              ".png";
+            const filename = `${category
+              .toLowerCase()
+              .replace(/\s+/g, "-")
+              .replace(/&/g, "and")}.png`;
             return (
               <Link
                 key={category + idx}
@@ -72,30 +41,21 @@ export default function PartnerSection() {
                   .toLowerCase()
                   .replace(/\s+/g, "-")
                   .replace(/&/g, "and")}`}
-                className="flex items-center justify-center"
-                style={{ minWidth: 180, minHeight: 100 }}
+                className="flex items-center justify-center min-w-[180px] min-h-[100px]"
               >
                 <Image
                   src={`/images/clients/${filename}`}
                   alt={category}
                   width={140}
                   height={70}
-                  className="object-contain max-h-20"
+                  className="object-contain max-h-10 h-auto w-auto"
                   loading="lazy"
                 />
               </Link>
             );
           })}
         </div>
-        <style>
-          {`
-            @keyframes marquee {
-              0% { transform: translateX(0%); }
-              100% { transform: translateX(-50%); }
-            }
-          `}
-        </style>
       </div>
-    </motion.div>
+    </motion.section>
   );
 }

@@ -1,76 +1,107 @@
 "use client";
 
-import CallUsSection from "@/components/homepage/CallUsSection";
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
+import { fetchUrl } from "@/utils/fetchUrl";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Journal } from "@/types/journal";
+import JournalList from "./components/JournalList";
+import JournalPagination from "./components/JournalPagination";
 
-// Example data with author and excerpt
-const journals = [
-  {
-    date: "8 Juni 2023",
-    title: "APA ITU MATCHA?",
-    excerpt:
-      "Matcha adalah teh hijau bubuk khas Jepang yang kaya manfaat. Pelajari sejarah, cara pembuatan, dan tips menikmatinya di sini.",
-    author: "Admin Teaflow",
-    url: "/journals/what-is-matcha",
-    original: "https://teaflow.webflow.io/post/what-is-matcha",
-    image: "/journals/matcha.jpg",
-  },
-  {
-    date: "4 Mei 2023",
-    title: "CARA MEMBUAT TEH DI ATAS API, MASAK MALAS",
-    excerpt:
-      "Cara sederhana membuat teh di atas api untuk hasil rasa yang berbeda. Cocok untuk kamu yang suka cara praktis.",
-    author: "Admin Teaflow",
-    url: "/journals/how-to-make-tea-on-fire-lazy-cooking",
-    original:
-      "https://teaflow.webflow.io/post/how-to-make-tea-on-fire-lazy-cooking",
-    image: "/journals/tea-fire.jpg",
-  },
-  {
-    date: "6 Maret 2023",
-    title:
-      "CHABAN (NAMPAN TEH), HUCHENG, CHACHUAN, DAN VARIAN NAMPAN TEH LAINNYA",
-    excerpt:
-      "Kenali berbagai jenis nampan teh dan fungsinya dalam tradisi minum teh. Dari Chaban hingga Chachuan.",
-    author: "Admin Teaflow",
-    url: "/journals/chaban-tea-tray-hucheng-chachuan-and-other-variants-of-tea-trays",
-    original:
-      "https://teaflow.webflow.io/post/chaban-tea-tray-hucheng-chachuan-and-other-variants-of-tea-trays",
-    image: "/journals/chaban.jpg",
-  },
-  {
-    date: "16 Januari 2023",
-    title: "CARA SEDUH TEH PU-ERH (SHU) YANG BENAR",
-    excerpt:
-      "Panduan lengkap menyeduh teh Pu-erh (Shu) agar rasa dan aroma maksimal. Cocok untuk pemula maupun pecinta teh.",
-    author: "Admin Teaflow",
-    url: "/journals/how-to-brew-shu-ripe-pu-erh-tea-correctly",
-    original:
-      "https://teaflow.webflow.io/post/how-to-brew-shu-ripe-pu-erh-tea-correctly",
-    image: "/journals/pu-erh.jpg",
-  },
-];
-
-// Example filter state (by author, can be expanded)
-const authors = ["All", ...Array.from(new Set(journals.map((j) => j.author)))];
+const PAGE_SIZE = 6;
 
 export default function JournalPage() {
+  const [journals, setJournals] = useState<Journal[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [authorFilter, setAuthorFilter] = useState("All");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
 
-  const filteredJournals =
-    authorFilter === "All"
-      ? journals
-      : journals.filter((j) => j.author === authorFilter);
+  useEffect(() => {
+    async function fetchTotal() {
+      let query = "";
+      if (authorFilter !== "All") {
+        query = `?where=createdBy%3D'${encodeURIComponent(authorFilter)}'`;
+      }
+      const countData = await fetchUrl("journals/count", query);
+      setTotal(Number(countData));
+    }
+    fetchTotal();
+  }, [authorFilter]);
+
+  useEffect(() => {
+    const fetchJournals = async () => {
+      setLoading(true);
+      try {
+        let query = `?pageSize=${PAGE_SIZE}&sortBy=created DESC&page=${page}`;
+        if (authorFilter !== "All") {
+          query += `&where=createdBy%3D'${encodeURIComponent(authorFilter)}'`;
+        }
+        const data = await fetchUrl("journals", query);
+        setJournals(data);
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchJournals();
+  }, [authorFilter, page]);
+
+  // Reset to page 1 when filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [authorFilter]);
+
+  const authors = [
+    "All",
+    ...Array.from(new Set(journals.map((j) => j.createdBy))),
+  ];
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
-    <main className="px-4 sm:px-8 md:px-28 py-8 pt-20 md:pt-26">
-      <section className="max-w-full mx-auto">
+    <motion.main
+      className="px-4 sm:px-8 md:px-28 py-8 pt-20 md:pt-26"
+      initial="hidden"
+      animate="visible"
+      variants={{
+        hidden: { opacity: 0, y: 40 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+        },
+      }}
+    >
+      <motion.section
+        className="max-w-full mx-auto"
+        variants={{
+          hidden: { opacity: 0, y: 40 },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+          },
+        }}
+      >
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-          <h1 className="text-2xl font-bold text-gray-900">JOURNAL</h1>
+          <motion.h1
+            className="text-2xl font-bold text-gray-900"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            JOURNAL
+          </motion.h1>
           {/* Filtering */}
-          <div className="flex gap-2">
+          <motion.div
+            className="flex gap-2"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             <label
               htmlFor="author"
               className="text-sm text-gray-700 self-center"
@@ -83,64 +114,45 @@ export default function JournalPage() {
               onChange={(e) => setAuthorFilter(e.target.value)}
               className="border rounded px-2 py-1 text-sm"
             >
-              {authors.map((a) => (
-                <option key={a} value={a}>
+              {authors.map((a, idx) => (
+                <option key={`${a}-${idx}`} value={a}>
                   {a}
                 </option>
               ))}
             </select>
-          </div>
+          </motion.div>
         </div>
-        <div className="flex flex-col gap-4">
-          {filteredJournals.map((journal, idx) => (
-            <div key={idx} className="flex items-start gap-4 border-b pb-4">
-              <div className="w-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200 h-16">
-                <Image
-                  src={journal.image}
-                  alt={journal.title}
-                  width={96}
-                  height={64}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <div className="flex-1">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-1 mb-1">
-                  <span className="text-xs text-gray-500">{journal.date}</span>
-                  <span className="hidden sm:inline text-xs text-gray-400 mx-2">
-                    |
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {journal.author}
-                  </span>
-                </div>
-                <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-1 leading-tight">
-                  <Link href={journal.url}>{journal.title}</Link>
-                </h2>
-                <p className="text-xs md:text-sm text-gray-600 mb-1">
-                  {journal.excerpt}
-                </p>
-                <Link
-                  href={journal.original}
-                  target="_blank"
-                  className="text-blue-600 hover:underline text-xs md:text-sm"
-                >
-                  Baca lebih lengkap
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-        {/* Navigation */}
-        <div className="mt-8 flex flex-col sm:flex-row gap-2">
-          <Link
-            href="/journals?page=2"
-            className="bg-gray-900 text-white px-4 py-2 rounded-md font-medium hover:bg-gray-800 transition text-xs"
+
+        {loading && (
+          <motion.div
+            className="text-center text-gray-500 py-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
           >
-            Halaman Selanjutnya
-          </Link>
-        </div>
-        <CallUsSection />
-      </section>
-    </main>
+            Loading journals...
+          </motion.div>
+        )}
+        {error && (
+          <motion.div
+            className="text-center text-red-500 py-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {error}
+          </motion.div>
+        )}
+
+        {!loading && !error && (
+          <>
+            <JournalList journals={journals} />
+            <JournalPagination
+              page={page}
+              totalPages={totalPages}
+              setPage={setPage}
+            />
+          </>
+        )}
+      </motion.section>
+    </motion.main>
   );
 }

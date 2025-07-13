@@ -1,39 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useAnimation } from "framer-motion";
+import { motion, useAnimation, useInView } from "framer-motion";
 import { useRef, useEffect } from "react";
-import { useInView } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
+const cardVariants = {
+  hidden: { opacity: 0, scale: 0.92, rotate: -6, filter: "blur(6px)" },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    rotate: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 1,
+      type: "spring" as const,
+      bounce: 0.25,
+      delay: 0.15,
+    },
+  },
+};
+
 export default function PhilosophySection() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { amount: 0.5, once: true });
   const controls = useAnimation();
+  const inView = useInView(ref, { amount: 0.5, once: true });
 
   useEffect(() => {
-    if (isInView) {
-      controls.start("visible");
-    }
-  }, [isInView, controls]);
-
-  // Unique animation for content: fade in, scale up, rotate, blur
-  const cardVariants = {
-    hidden: { opacity: 0, scale: 0.92, rotate: -6, filter: "blur(6px)" },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      rotate: 0,
-      filter: "blur(0px)",
-      transition: {
-        duration: 1,
-        type: "spring" as const,
-        bounce: 0.28,
-        delay: 0.15,
-      },
-    },
-  };
+    if (inView) controls.start("visible");
+  }, [inView, controls]);
 
   return (
     <motion.section
@@ -41,46 +37,24 @@ export default function PhilosophySection() {
       className="py-10 bg-white"
       initial="hidden"
       animate={controls}
-      variants={{
-        hidden: { opacity: 0, scale: 0.96, filter: "blur(8px)" },
-        visible: {
-          opacity: 1,
-          scale: 1,
-          filter: "blur(0px)",
-          transition: { duration: 1, type: "spring" as const, bounce: 0.22 },
-        },
-      }}
+      variants={cardVariants}
     >
       <div className="max-w-5xl mx-auto px-2 mt-10 sm:px-4 lg:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Text Content */}
-          <motion.div
-            className="space-y-4"
-            variants={cardVariants}
-            initial="hidden"
-            animate={controls}
-          >
+          <motion.div className="space-y-4" variants={cardVariants}>
             <h2 className="text-2xl md:text-5xl font-bold text-gray-900">
               PHILOSOPHY
             </h2>
-
             <Link
               href="/about-us"
-              className="font-medium text-base transition-all duration-300 transform hover:scale-105"
+              className="font-medium text-base transition-all duration-300 transform hover:scale-105 inline-flex items-center gap-1"
             >
               about us
               <FontAwesomeIcon icon={faChevronRight} />
             </Link>
           </motion.div>
-          {/* Visual Content */}
-          <motion.div
-            className="relative"
-            variants={cardVariants}
-            initial="hidden"
-            animate={controls}
-          >
+          <motion.div className="relative" variants={cardVariants}>
             <div className="bg-gradient-to-br from-green-100 to-blue-100 rounded-3xl p-6 h-72 flex items-center justify-center">
-              {/* Ocean and Tea Visualization */}
               <div className="text-center space-y-4">
                 <div className="space-y-1">
                   <div className="text-xl font-bold text-gray-800">

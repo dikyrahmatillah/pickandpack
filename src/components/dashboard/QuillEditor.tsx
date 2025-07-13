@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import type QuillType from "quill";
 
 interface QuillEditorProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
+  maxImageSize?: number; // in MB
 }
 
 const QuillEditor: React.FC<QuillEditorProps> = ({
@@ -14,115 +16,333 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   onChange,
   placeholder = "Start writing your journal...",
   className = "",
+  maxImageSize = 5, // 5MB default
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const quillRef = useRef<any>(null);
+  // Import type for Quill instance
+  const quillRef = useRef<QuillType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const isInitialized = useRef(false);
 
+  // Create stable refs for the callbacks
+  const onChangeRef = useRef(onChange);
+  const valueRef = useRef(value);
+
+  // Update refs when props change
   useEffect(() => {
-    let isMounted = true;
+    onChangeRef.current = onChange;
+    valueRef.current = value;
+  });
 
-    // Load CSS with better error handling
-    const loadCSS = () => {
-      return new Promise<void>((resolve) => {
-        // Check if CSS is already loaded
-        if (
-          document.querySelector('link[href*="quill.snow.css"]') ||
-          document.querySelector('link[href*="quill-fallback.css"]')
-        ) {
+  const loadQuillCSS = async (): Promise<void> => {
+    // Check if CSS is already loaded
+    if (document.querySelector('link[href*="quill.snow.css"]')) {
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href =
+        "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css";
+
+      link.onload = () => {
+        console.log("Quill CSS loaded successfully");
+        resolve();
+      };
+
+      link.onerror = () => {
+        console.error("Failed to load Quill CSS");
+        // Try alternative CDN
+        const fallbackLink = document.createElement("link");
+        fallbackLink.rel = "stylesheet";
+        fallbackLink.href =
+          "https://cdnjs.cloudflare.com/ajax/libs/quill/2.0.3/quill.snow.css";
+
+        fallbackLink.onload = () => {
+          console.log("Quill CSS loaded from fallback CDN");
           resolve();
+        };
+
+        fallbackLink.onerror = () => {
+          console.error("Failed to load Quill CSS from fallback CDN");
+          reject(new Error("Failed to load Quill CSS"));
+        };
+
+        document.head.appendChild(fallbackLink);
+      };
+
+      document.head.appendChild(link);
+    });
+  };
+
+  // Convert file to base64
+  // (Removed unused fileToBase64 function)
+
+  // Resize image to fit max dimensions
+  const resizeImage = React.useCallback(
+    (
+      file: File,
+      maxWidth: number = 800,
+      maxHeight: number = 600
+    ): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const img = new Image();
+
+        img.onload = () => {
+          // Calculate new dimensions
+          let { width, height } = img;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height = (height * maxWidth) / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = (width * maxHeight) / height;
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          // Draw and compress
+          ctx?.drawImage(img, 0, 0, width, height);
+          const base64 = canvas.toDataURL("image/jpeg", 0.8);
+          resolve(base64);
+        };
+
+        img.onerror = reject;
+        img.src = URL.createObjectURL(file);
+      });
+    },
+    []
+  );
+
+  // Custom image handler
+  const imageHandler = () => {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      // Check file size
+      if (file.size > maxImageSize * 1024 * 1024) {
+        alert(`Image size should be less than ${maxImageSize}MB`);
+        return;
+      }
+
+      // Check file type
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file");
+        return;
+      }
+
+      try {
+        // Show loading state
+        const quill = quillRef.current;
+        if (!quill) {
+          alert("Editor is not ready yet. Please try again.");
+          return;
+        }
+        const range = quill.getSelection();
+        if (!range) {
+          alert("Please place the cursor where you want to insert the image.");
           return;
         }
 
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = "https://cdn.quilljs.com/2.0.3/quill.snow.css";
-        link.crossOrigin = "anonymous";
+        // Insert placeholder
+        quill.insertText(range.index, "🖼️ Loading image...", "user");
 
-        link.onload = () => {
-          console.log("Quill CSS loaded successfully from CDN");
-          resolve();
-        };
+        // Resize and convert to base64
+        const base64 = await resizeImage(file);
 
-        link.onerror = () => {
-          console.warn(
-            "Failed to load Quill CSS from CDN, trying local fallback"
-          );
-          document.head.removeChild(link);
+        // Remove placeholder
+        quill.deleteText(range.index, "🖼️ Loading image...".length);
 
-          // Try local fallback
-          const fallbackLink = document.createElement("link");
-          fallbackLink.rel = "stylesheet";
-          fallbackLink.href = "/quill-fallback.css";
+        // Insert image
+        quill.insertEmbed(range.index, "image", base64);
 
-          fallbackLink.onload = () => {
-            console.log("Quill CSS loaded from local fallback");
-            resolve();
-          };
-
-          fallbackLink.onerror = () => {
-            console.error(
-              "Failed to load Quill CSS from all sources, continuing with inline styles"
-            );
-            resolve(); // Continue anyway
-          };
-
-          document.head.appendChild(fallbackLink);
-        };
-
-        document.head.appendChild(link);
-      });
+        // Move cursor after image
+        quill.setSelection(range.index + 1);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        alert("Failed to upload image. Please try again.");
+      }
     };
+  };
 
-    const initQuill = async () => {
+  // Simplified image resize handles - proportional resizing only
+  const addImageResizeHandles = () => {
+    const images = editorRef.current?.querySelectorAll("img");
+    images?.forEach((img) => {
+      if (img.getAttribute("data-resizable")) return; // Already has handlers
+
+      img.setAttribute("data-resizable", "true");
+      img.style.cursor = "pointer";
+      img.style.maxWidth = "100%";
+      img.style.height = "auto";
+
+      let isResizing = false;
+      let startX: number, startWidth: number, aspectRatio: number;
+
+      const onMouseDown = (e: MouseEvent) => {
+        if (e.detail === 2) {
+          // Double click to toggle between small, medium, and large sizes
+          const currentWidth = parseInt(img.style.width || "100%", 10);
+          if (currentWidth <= 200) {
+            img.style.width = "400px";
+          } else if (currentWidth <= 400) {
+            img.style.width = "100%";
+          } else {
+            img.style.width = "200px";
+          }
+          return;
+        }
+
+        isResizing = true;
+        startX = e.clientX;
+        startWidth = parseInt(
+          document.defaultView?.getComputedStyle(img).width || "0",
+          10
+        );
+
+        // Calculate aspect ratio from natural dimensions
+        aspectRatio = img.naturalWidth / img.naturalHeight;
+
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp);
+        e.preventDefault();
+      };
+
+      const onMouseMove = (e: MouseEvent) => {
+        if (!isResizing) return;
+
+        const deltaX = e.clientX - startX;
+        const newWidth = Math.max(50, startWidth + deltaX); // Minimum 50px width
+        const newHeight = newWidth / aspectRatio;
+
+        img.style.width = newWidth + "px";
+        img.style.height = newHeight + "px";
+        // Also set inline style attribute so it persists in HTML
+        img.setAttribute(
+          "style",
+          `width: ${newWidth}px; height: ${newHeight}px; max-width: 100%; border-radius: 4px; margin: 10px 0; transition: all 0.2s ease;`
+        );
+      };
+
+      const onMouseUp = () => {
+        isResizing = false;
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp);
+      };
+
+      img.addEventListener("mousedown", onMouseDown);
+
+      // Add visual indicator
+      img.addEventListener("mouseenter", () => {
+        img.style.border = "2px dashed #007bff";
+      });
+
+      img.addEventListener("mouseleave", () => {
+        if (!isResizing) {
+          img.style.border = "none";
+        }
+      });
+    });
+  };
+
+  const retry = () => {
+    setRetryCount((prev) => prev + 1);
+    isInitialized.current = false;
+
+    // Clean up completely before retry
+    if (quillRef.current) {
+      quillRef.current.off("text-change");
+      quillRef.current = null;
+    }
+
+    // Remove ALL toolbars
+    const allToolbars = document.querySelectorAll(".ql-toolbar");
+    allToolbars.forEach((toolbar) => toolbar.remove());
+
+    if (editorRef.current) {
+      editorRef.current.innerHTML = "";
+    }
+
+    // Small delay before reinitializing
+    setTimeout(() => {
+      window.location.reload(); // Force a complete refresh for retry
+    }, 100);
+  };
+
+  useEffect(() => {
+    const initialize = async () => {
+      if (!editorRef.current || isInitialized.current) return;
+
       try {
-        if (!isMounted || !editorRef.current || quillRef.current) return;
+        setError(null);
+        setIsLoading(true);
 
-        console.log("Starting Quill initialization...");
+        console.log("Loading Quill CSS...");
+        await loadQuillCSS();
 
-        // Load CSS and wait for it
-        await loadCSS();
-
-        // Wait for CSS to be fully applied
+        // Wait for CSS to be applied
         await new Promise((resolve) => setTimeout(resolve, 500));
 
-        // Import Quill dynamically
+        console.log("Importing Quill...");
         const QuillModule = await import("quill");
         const Quill = QuillModule.default;
 
-        console.log(
-          "Quill imported successfully, version:",
-          Quill.version || "2.0.3"
-        );
-
-        // Configure toolbar with better options
-        const toolbarOptions = [
-          [{ header: [1, 2, 3, false] }],
-          ["bold", "italic", "underline", "strike"],
-          [{ color: [] }, { background: [] }],
-          [{ list: "ordered" }, { list: "bullet" }],
-          [{ indent: "-1" }, { indent: "+1" }],
-          ["blockquote", "code-block"],
-          ["link", "image"],
-          [{ align: [] }],
-          ["clean"],
-        ];
-
-        // Clear any existing content in the editor container
-        if (editorRef.current) {
-          editorRef.current.innerHTML = "";
+        if (!editorRef.current) {
+          throw new Error("Editor reference is null");
         }
 
-        // Initialize Quill with better configuration
+        // Clean up any existing Quill instance first
+        if (quillRef.current) {
+          quillRef.current.off("text-change");
+          quillRef.current = null;
+        }
+
+        // Remove ALL existing toolbars globally
+        const allToolbars = document.querySelectorAll(".ql-toolbar");
+        allToolbars.forEach((toolbar) => toolbar.remove());
+
+        // Clear the editor container completely
+        editorRef.current.innerHTML = "";
+
+        console.log("Initializing Quill editor...");
+
+        // Initialize Quill
         quillRef.current = new Quill(editorRef.current, {
           theme: "snow",
-          placeholder: placeholder,
+          placeholder,
           modules: {
-            toolbar: toolbarOptions,
-            clipboard: {
-              matchVisual: false,
+            toolbar: {
+              container: [
+                [{ header: [1, 2, 3, false] }],
+                ["bold", "italic", "underline", "strike"],
+                [{ color: [] }, { background: [] }],
+                [{ list: "ordered" }, { list: "bullet" }],
+                [{ indent: "-1" }, { indent: "+1" }],
+                ["blockquote", "code-block"],
+                ["link", "image"],
+                [{ align: [] }],
+                ["clean"],
+              ],
+              handlers: {
+                image: imageHandler,
+              },
             },
           },
           formats: [
@@ -135,120 +355,139 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
             "background",
             "list",
             "indent",
+            "blockquote",
+            "code-block",
             "link",
             "image",
             "align",
-            "blockquote",
-            "code-block",
           ],
         });
 
-        console.log("Quill initialized successfully");
-
         // Set initial content
-        if (value && isMounted) {
+        if (valueRef.current) {
           try {
-            // Use clipboard.convert for proper Delta conversion in Quill 2.x
-            const delta = quillRef.current.clipboard.convert({ html: value });
-            quillRef.current.setContents(delta, "silent");
-            console.log("Initial content set successfully");
-          } catch (err) {
-            // Fallback for any conversion issues
-            console.warn(
-              "Failed to set content with Delta, using innerHTML fallback:",
-              err
-            );
-            quillRef.current.root.innerHTML = value;
+            quillRef.current.clipboard.dangerouslyPasteHTML(valueRef.current);
+          } catch (e) {
+            console.warn("Failed to set initial content:", e);
           }
         }
 
-        // Listen for text changes
+        // Listen for changes with debounce to prevent excessive updates
+        let changeTimeout: NodeJS.Timeout;
         quillRef.current.on("text-change", () => {
-          if (quillRef.current && isMounted) {
-            try {
-              // Use getSemanticHTML() for Quill 2.x - this is the preferred method
-              const html = quillRef.current.getSemanticHTML();
-              onChange(html);
-            } catch (err) {
-              console.warn(
-                "Failed to get semantic HTML, using innerHTML fallback:",
-                err
-              );
-              onChange(quillRef.current.root.innerHTML);
-            }
+          if (quillRef.current) {
+            clearTimeout(changeTimeout);
+            changeTimeout = setTimeout(() => {
+              const html = quillRef.current?.getSemanticHTML();
+              if (html) {
+                onChangeRef.current(html);
+              }
+
+              // Add resize handles to new images
+              setTimeout(() => {
+                addImageResizeHandles();
+              }, 100);
+            }, 300); // 300ms debounce
           }
         });
 
-        if (isMounted) {
-          setIsLoading(false);
-          setError(null);
-          console.log("Quill setup completed successfully");
-        }
+        // Add resize handles to existing images
+        setTimeout(() => {
+          addImageResizeHandles();
+        }, 100);
+
+        isInitialized.current = true;
+        setIsLoading(false);
+        console.log("Quill editor initialized successfully");
       } catch (err) {
-        console.error("Failed to initialize Quill:", err);
-        if (isMounted) {
-          setError("Failed to load the editor. Please refresh the page.");
-          setIsLoading(false);
-        }
+        console.error("Quill initialization failed:", err);
+        setError(
+          `Failed to load editor: ${
+            err instanceof Error ? err.message : "Unknown error"
+          }`
+        );
+        setIsLoading(false);
       }
     };
 
-    if (typeof window !== "undefined") {
-      initQuill();
+    if (typeof window !== "undefined" && !isInitialized.current) {
+      initialize();
     }
 
     return () => {
-      isMounted = false;
+      // Clean up function
       if (quillRef.current) {
+        try {
+          quillRef.current.off("text-change");
+        } catch {
+          // Ignore cleanup errors
+        }
         quillRef.current = null;
       }
+
+      // Remove ALL toolbars on unmount
+      const allToolbars = document.querySelectorAll(".ql-toolbar");
+      allToolbars.forEach((toolbar) => toolbar.remove());
+
+      isInitialized.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run once to initialize Quill
+  }, []); // Only run once on mount
 
-  // Update content when value prop changes
+  // Update content when value changes
   useEffect(() => {
-    if (quillRef.current) {
-      try {
-        const currentContent = quillRef.current.getSemanticHTML();
-
-        if (value !== currentContent) {
-          const currentSelection = quillRef.current.getSelection();
-
-          try {
-            // Use clipboard.convert for proper Delta conversion in Quill 2.x
-            const delta = quillRef.current.clipboard.convert({ html: value });
-            quillRef.current.setContents(delta, "silent");
-          } catch (err) {
-            console.warn(
-              "Failed to update content with Delta, using innerHTML fallback:",
-              err
-            );
-            quillRef.current.root.innerHTML = value;
-          }
-
-          if (currentSelection) {
-            quillRef.current.setSelection(currentSelection);
-          }
+    if (quillRef.current && isInitialized.current) {
+      const currentContent = quillRef.current.getSemanticHTML();
+      if (valueRef.current !== currentContent) {
+        try {
+          quillRef.current.clipboard.dangerouslyPasteHTML(valueRef.current);
+          // Add resize handles to images after content update
+          setTimeout(() => {
+            addImageResizeHandles();
+          }, 100);
+        } catch (e) {
+          console.warn("Failed to update content:", e);
         }
-      } catch (err) {
-        console.warn("Failed to check content:", err);
       }
     }
-  }, [value]);
+  }, [value]); // Keep this effect to update when external value changes
 
   if (error) {
     return (
       <div
         className={`border border-red-300 rounded-lg p-4 bg-red-50 ${className}`}
       >
-        <p className="text-red-600 text-sm">{error}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-2 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
-        >
-          Refresh Page
-        </button>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-red-600 text-sm font-medium">
+            Editor failed to load
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={retry}
+              className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+            >
+              Retry ({retryCount + 1})
+            </button>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+            >
+              Refresh Page
+            </button>
+          </div>
+        </div>
+        <p className="text-red-500 text-xs">{error}</p>
+        <details className="mt-2">
+          <summary className="text-xs text-gray-600 cursor-pointer">
+            Troubleshooting tips
+          </summary>
+          <ul className="text-xs text-gray-600 mt-1 ml-4">
+            <li>• Check browser console for errors</li>
+            <li>• Verify internet connection</li>
+            <li>• Try refreshing the page</li>
+            <li>• Check if ad blockers are interfering</li>
+          </ul>
+        </details>
       </div>
     );
   }
@@ -257,25 +496,38 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     <div className={`quill-editor-wrapper ${className}`}>
       {isLoading && (
         <div className="border border-gray-300 rounded-lg p-4 bg-gray-50 min-h-[300px] flex items-center justify-center">
-          <div className="text-gray-500 text-sm">Loading editor...</div>
+          <div className="text-center">
+            <div className="flex items-center justify-center space-x-2 mb-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              <span className="text-gray-500 text-sm">
+                Loading editor...
+                {retryCount > 0 && ` (Attempt ${retryCount + 1})`}
+              </span>
+            </div>
+          </div>
         </div>
       )}
 
       <div
         ref={editorRef}
+        className="quill-container"
         style={{
           minHeight: "300px",
           display: isLoading ? "none" : "block",
         }}
       />
 
+      {/* Image Upload Instructions */}
+      <div className="mt-2 text-xs text-gray-500">
+        💡 <strong>Image tips:</strong> Click the image button to upload •
+        Double-click images to cycle through sizes • Drag to resize
+        proportionally • Max size: {maxImageSize}MB
+      </div>
+
       <style jsx global>{`
-        /* Ensure Quill editor is visible and properly styled */
-        .quill-editor-wrapper .ql-toolbar,
-        .quill-editor-wrapper .ql-container {
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-            "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-            "Helvetica Neue", sans-serif;
+        .quill-editor-wrapper {
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+            sans-serif;
         }
 
         .quill-editor-wrapper .ql-toolbar {
@@ -283,8 +535,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
           border-top-left-radius: 0.375rem;
           border-top-right-radius: 0.375rem;
           border-bottom: none;
-          background: #ffffff;
-          padding: 8px;
+          background: white;
         }
 
         .quill-editor-wrapper .ql-container {
@@ -292,160 +543,59 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
           border-bottom-left-radius: 0.375rem;
           border-bottom-right-radius: 0.375rem;
           border-top: none;
-          font-size: 14px;
-          font-family: inherit;
         }
 
         .quill-editor-wrapper .ql-editor {
           min-height: 250px;
-          padding: 1rem;
-          line-height: 1.6;
-          font-family: inherit;
-          color: #111827;
-          background: #ffffff;
+          padding: 12px 15px;
+          color: #333;
+          background: white;
+          border-bottom-left-radius: 0.375rem;
+          border-bottom-right-radius: 0.375rem;
         }
 
-        .quill-editor-wrapper .ql-editor.ql-blank::before {
-          color: #9ca3af;
-          font-style: italic;
-          left: 1rem;
-          right: 1rem;
-        }
-
-        /* Toolbar button styling */
-        .quill-editor-wrapper .ql-toolbar button {
-          display: inline-block;
-          cursor: pointer;
-          border: none;
-          background: none;
-          padding: 5px;
-          margin: 2px;
-          border-radius: 3px;
-        }
-
-        .quill-editor-wrapper .ql-toolbar button:hover {
-          background-color: #f3f4f6;
-        }
-
-        .quill-editor-wrapper .ql-toolbar button.ql-active {
-          background-color: #e5e7eb;
-        }
-
-        /* Fix for toolbar icons */
-        .quill-editor-wrapper .ql-toolbar .ql-stroke {
-          fill: none;
-          stroke: #374151;
-          stroke-linecap: round;
-          stroke-linejoin: round;
-          stroke-width: 2;
-        }
-
-        .quill-editor-wrapper .ql-toolbar .ql-fill {
-          fill: #374151;
-          stroke: none;
-        }
-
-        .quill-editor-wrapper .ql-toolbar button:hover .ql-stroke {
-          stroke: #2563eb;
-        }
-
-        .quill-editor-wrapper .ql-toolbar button:hover .ql-fill {
-          fill: #2563eb;
-        }
-
-        .quill-editor-wrapper .ql-toolbar button.ql-active .ql-stroke {
-          stroke: #2563eb;
-        }
-
-        .quill-editor-wrapper .ql-toolbar button.ql-active .ql-fill {
-          fill: #2563eb;
-        }
-
-        /* Dropdown styling */
-        .quill-editor-wrapper .ql-toolbar .ql-picker {
-          color: #374151;
-        }
-
-        .quill-editor-wrapper .ql-toolbar .ql-picker-options {
-          background-color: #ffffff;
-          border: 1px solid #d1d5db;
-          border-radius: 0.375rem;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Content styling */
-        .quill-editor-wrapper .ql-editor h1 {
-          font-size: 2rem;
-          font-weight: bold;
-          margin-bottom: 1rem;
-          line-height: 1.2;
-        }
-
-        .quill-editor-wrapper .ql-editor h2 {
-          font-size: 1.5rem;
-          font-weight: bold;
-          margin-bottom: 0.75rem;
-          line-height: 1.3;
-        }
-
-        .quill-editor-wrapper .ql-editor h3 {
-          font-size: 1.25rem;
-          font-weight: bold;
-          margin-bottom: 0.5rem;
-          line-height: 1.4;
-        }
-
-        .quill-editor-wrapper .ql-editor p {
-          margin-bottom: 1rem;
-        }
-
-        .quill-editor-wrapper .ql-editor ul,
-        .quill-editor-wrapper .ql-editor ol {
-          padding-left: 1.5rem;
-          margin-bottom: 1rem;
-        }
-
-        .quill-editor-wrapper .ql-editor blockquote {
-          border-left: 4px solid #e5e7eb;
-          padding-left: 1rem;
-          margin: 1rem 0;
-          font-style: italic;
-          color: #6b7280;
-        }
-
-        .quill-editor-wrapper .ql-editor pre {
-          background-color: #f3f4f6;
-          padding: 1rem;
-          border-radius: 0.375rem;
-          overflow-x: auto;
-          margin: 1rem 0;
-        }
-
+        /* Image styling */
         .quill-editor-wrapper .ql-editor img {
+          display: block;
           max-width: 100%;
           height: auto;
-          border-radius: 0.375rem;
-          margin: 1rem 0;
+          margin: 10px 0;
+          border-radius: 4px;
+          transition: all 0.2s ease;
         }
 
-        .quill-editor-wrapper .ql-editor a {
-          color: #2563eb;
-          text-decoration: underline;
+        .quill-editor-wrapper .ql-editor img:hover {
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .quill-editor-wrapper .ql-editor a:hover {
-          color: #1d4ed8;
+        .quill-editor-wrapper .ql-editor img[data-resizable="true"] {
+          cursor: pointer;
+          user-select: none;
         }
 
-        /* Force visibility of editor elements */
-        .quill-editor-wrapper {
+        /* Ensure only one toolbar exists */
+        .ql-toolbar:not(.quill-editor-wrapper .ql-toolbar) {
+          display: none !important;
+        }
+
+        /* Hide any orphaned toolbars */
+        body > .ql-toolbar {
+          display: none !important;
+        }
+
+        /* Image upload button styling */
+        .quill-editor-wrapper .ql-toolbar .ql-image {
           position: relative;
         }
 
-        .quill-editor-wrapper .ql-toolbar,
-        .quill-editor-wrapper .ql-container {
-          display: block !important;
-          visibility: visible !important;
+        .quill-editor-wrapper .ql-toolbar .ql-image::after {
+          content: "📷";
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 12px;
+          opacity: 0.7;
         }
       `}</style>
     </div>

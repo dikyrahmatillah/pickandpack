@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import React from "react";
+import { fetchUrl } from "@/utils/fetchUrl";
 
 type Product = {
   objectId: string;
@@ -35,6 +36,7 @@ const sortOptions = [
 
 export default function ProductsPage() {
   const { data: session } = useSession();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(0);
@@ -57,26 +59,20 @@ export default function ProductsPage() {
 
   const fetchProducts = async (start: number, reset = false) => {
     setLoading(true);
-    let url = `https://headwheel-us.backendless.app/api/data/products?pageSize=${pageSize}&offset=${start}`;
+
+    let query = `?pageSize=${pageSize}&offset=${start}`;
     if (category) {
-      url += `&where=category%3D'${encodeURIComponent(category)}'`;
+      query += `&where=category%3D'${encodeURIComponent(category)}'`;
     }
-    // Sorting logic (client-side for demo, Backendless supports order by for simple fields)
-    if (sort === "price-asc") {
-      url += "&sortBy=price%20asc";
-    } else if (sort === "price-desc") {
-      url += "&sortBy=price%20desc";
-    } else if (sort === "name-asc") {
-      url += "&sortBy=name%20asc";
-    } else if (sort === "name-desc") {
-      url += "&sortBy=name%20desc";
-    } else if (sort === "oldest") {
-      url += "&sortBy=created%20asc";
-    } else if (sort === "newest") {
-      url += "&sortBy=created%20desc";
-    }
-    const res = await fetch(url);
-    const data = await res.json();
+    if (sort === "price-asc") query += "&sortBy=price%20asc";
+    else if (sort === "price-desc") query += "&sortBy=price%20desc";
+    else if (sort === "name-asc") query += "&sortBy=name%20asc";
+    else if (sort === "name-desc") query += "&sortBy=name%20desc";
+    else if (sort === "oldest") query += "&sortBy=created%20asc";
+    else if (sort === "newest") query += "&sortBy=created%20desc";
+
+    const data = await fetchUrl("products", query);
+
     if (reset) {
       setProducts(data);
     } else {
@@ -100,12 +96,7 @@ export default function ProductsPage() {
   const handleConfirmDelete = async () => {
     if (!deleteId) return;
     try {
-      await fetch(
-        `https://headwheel-us.backendless.app/api/data/products/${deleteId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      await fetchUrl(`products/${deleteId}`, "", { method: "DELETE" });
       setProducts((prev) => prev.filter((p) => p.objectId !== deleteId));
     } catch (err) {
       throw new Error("Failed to delete product " + err);
@@ -121,10 +112,69 @@ export default function ProductsPage() {
 
   return (
     <RoleGuard>
-      <main className="px-4 sm:px-8 md:px-28 py-8 pt-30 md:pt-50">
-        <DashboardSidebar />
+      <main className="min-h-screen mt-20">
+        {/* Mobile Sidebar Toggle Button */}
+        <button
+          className="fixed bottom-4 left-4 z-30 p-2 bg-white rounded-md shadow md:hidden"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open sidebar"
+        >
+          {/* Hamburger Icon */}
+          <svg
+            className="w-6 h-6 text-gray-700"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
 
-        <div className="flex-1 ml-64 p-8">
+        {/* Sidebar for desktop */}
+        <div className="hidden md:block">
+          <DashboardSidebar />
+        </div>
+
+        {/* Sidebar overlay for mobile */}
+        {sidebarOpen && (
+          <div className="fixed inset-0 z-40 flex md:hidden">
+            {/* Overlay */}
+            <div
+              className="fixed inset-0 bg-black bg-opacity-30"
+              onClick={() => setSidebarOpen(false)}
+            />
+            {/* Sidebar */}
+            <aside className="relative w-64 bg-white h-full shadow-md z-50">
+              <button
+                className="absolute top-4 right-4 p-2"
+                onClick={() => setSidebarOpen(false)}
+                aria-label="Close sidebar"
+              >
+                <svg
+                  className="w-6 h-6 text-gray-700"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+              <DashboardSidebar />
+            </aside>
+          </div>
+        )}
+
+        <div className="flex-1 p-4 md:p-8 md:ml-64">
           <div className="mb-8 flex justify-between items-center">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -251,7 +301,7 @@ export default function ProductsPage() {
                         )}
                         {isAdmin && (
                           <button
-                            className="px-3 py-1 bg-red-100 text-red-700 text-sm rounded-none hover:bg-red-200"
+                            className="px-3 py-1 bg-red-100 text-red-700 text-sm rounded-none hover:bg-red-200 cursor-pointer"
                             onClick={() => handleDeleteClick(product.objectId)}
                           >
                             Delete

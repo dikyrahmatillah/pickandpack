@@ -3,58 +3,69 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-// Mock User hints to help with login
 const userHints = [
   { email: "admin@mail.com", label: "Admin" },
   { email: "editor@mail.com", label: "Editor" },
   { email: "viewer@mail.com", label: "Viewer" },
 ];
 
+// 1. Define Zod schema
+const LoginSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(5, { message: "Password must be at least 5 characters" })
+    .regex(/\d/, { message: "Password must contain at least one number" }),
+});
+
+type LoginForm = z.infer<typeof LoginSchema>;
+
 export default function LoginPage() {
-  const [credentials, setCredentials] = useState({
-    email: "",
-    password: "",
-  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [showHints, setShowHints] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<LoginForm>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
     setError("");
-
     try {
       const result = await signIn("credentials", {
         redirect: false,
-        email: credentials.email,
-        password: credentials.password,
+        email: data.email,
+        password: data.password,
       });
-
       if (result?.error) {
         setError("Invalid email or password");
         setIsLoading(false);
         return;
       }
-
-      window.location.href = "/dashboard"; // Redirect to dashboard on successful login
+      window.location.href = "/dashboard";
     } catch (err) {
       setError("An error occurred during login: " + (err as Error).message);
       setIsLoading(false);
     }
   };
 
-  // For easy login in development
   const setLoginCredentials = (email: string) => {
-    setCredentials({ email, password: "" });
-    if (email === "admin@mail.com") {
-      setCredentials((prev) => ({ ...prev, password: "admin123" }));
-    } else if (email === "editor@mail.com") {
-      setCredentials((prev) => ({ ...prev, password: "editor123" }));
-    } else if (email === "viewer@mail.com") {
-      setCredentials((prev) => ({ ...prev, password: "viewer123" }));
-    }
+    setValue("email", email);
+    if (email === "admin@mail.com") setValue("password", "admin123");
+    else if (email === "editor@mail.com") setValue("password", "editor123");
+    else if (email === "viewer@mail.com") setValue("password", "viewer123");
+    else setValue("password", "");
   };
 
   return (
@@ -68,7 +79,7 @@ export default function LoginPage() {
             {error}
           </div>
         )}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label
               htmlFor="email"
@@ -79,14 +90,16 @@ export default function LoginPage() {
             <input
               id="email"
               type="email"
-              value={credentials.email}
-              onChange={(e) =>
-                setCredentials({ ...credentials, email: e.target.value })
-              }
+              {...register("email")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm"
               placeholder="your@email.com"
               required
             />
+            {errors.email && (
+              <p className="text-xs text-red-600 mt-1">
+                {errors.email.message}
+              </p>
+            )}
           </div>
           <div>
             <label
@@ -98,19 +111,21 @@ export default function LoginPage() {
             <input
               id="password"
               type="password"
-              value={credentials.password}
-              onChange={(e) =>
-                setCredentials({ ...credentials, password: e.target.value })
-              }
+              {...register("password")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm"
               placeholder="••••••••"
               required
             />
+            {errors.password && (
+              <p className="text-xs text-red-600 mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </div>
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gray-900 text-white py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 text-sm"
+            className="w-full bg-gray-900 text-white py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 text-sm cursor-pointer"
           >
             {isLoading ? "Signing in..." : "Sign In"}
           </button>
@@ -123,7 +138,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowHints(!showHints)}
-                className="text-gray-800 underline"
+                className="text-gray-800 underline cursor-pointer"
               >
                 {showHints ? "Hide login hints" : "Show login hints"}
               </button>
@@ -134,7 +149,7 @@ export default function LoginPage() {
                   <button
                     key={user.email}
                     onClick={() => setLoginCredentials(user.email)}
-                    className="text-xs text-left px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded"
+                    className="text-xs text-left px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded cursor-pointer"
                   >
                     {user.label}: {user.email}
                   </button>
@@ -148,14 +163,14 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-            className="flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
+            className="flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
           >
             <span className="mr-2">🔵</span> Google
           </button>
           <button
             type="button"
             onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
-            className="flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
+            className="flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer"
           >
             <span className="mr-2">🐙</span> GitHub
           </button>
@@ -164,7 +179,7 @@ export default function LoginPage() {
           Don&apos;t have an account?{" "}
           <Link
             href="/contact"
-            className="font-medium text-gray-900 hover:underline"
+            className="font-medium text-gray-900 hover:underline disable-link"
           >
             Contact us to request access
           </Link>

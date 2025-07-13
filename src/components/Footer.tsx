@@ -1,12 +1,29 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export default function Footer() {
   return (
-    <footer className="w-full px-10 md:px-28 mt-40 mb-20">
+    <footer>
       <div className="mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-4 gap-8"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={{
+            visible: { transition: { staggerChildren: 0.15 } },
+          }}
+        >
           {/* Shop Section */}
-          <div>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.5 }}
+          >
             <h3 className="text-lg font-semibold mb-4">SHOP</h3>
             <ul className="space-y-6">
               <li>
@@ -50,10 +67,16 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </motion.div>
 
           {/* Help Section */}
-          <div>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
             <h3 className="text-lg font-semibold mb-4">HELP</h3>
             <ul className="space-y-2">
               <li>
@@ -89,10 +112,16 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </motion.div>
 
           {/* About Us Section */}
-          <div>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             <h3 className="text-lg font-semibold mb-4">ABOUT US</h3>
             <ul className="space-y-2">
               <li>
@@ -120,10 +149,16 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </motion.div>
 
           {/* Newsletter Section */}
-          <div>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 30 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
             <h3 className="text-lg font-semibold mb-4">GET 20% OFF</h3>
             <p className="text-gray-800 mb-4">
               Your first order + future sales updates.
@@ -132,7 +167,7 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="w-full px-4 py-2  border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-white"
+                className="w-full px-4 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-white"
               />
               <button
                 type="submit"
@@ -151,28 +186,36 @@ export default function Footer() {
                 privacy policy
               </Link>
             </p>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Social Media and Bottom Section */}
-        <div className="border-t border-gray-800 mt-8 pt-8">
+        <motion.div
+          className="border-t border-gray-800 mt-8 pt-8"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+        >
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <h3 className="text-lg font-semibold mb-2">FOLLOW US</h3>
-              <a
-                href="https://www.instagram.com/tea_flow_usa/"
+              <motion.a
+                href="https://www.instagram.com/pickandpack_id/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-800 hover:text-white transition-colors"
+                whileHover={{ scale: 1.08, color: "#22c55e" }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
-                @tea_flow
-              </a>
+                @pickandpack_id
+              </motion.a>
             </div>
             <div className="text-center text-gray-400 text-sm">
-              © 2024 Tea Flow. All rights reserved.
+              © {new Date().getFullYear()} Pick & Pack. All rights reserved.
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </footer>
   );
