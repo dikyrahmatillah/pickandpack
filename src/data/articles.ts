@@ -5,7 +5,7 @@ export const articles = [
     date: "Jul 3, 2025",
     description:
       "Apa Itu Corrugated Box? Kenali Fungsi dan Jenisnya Di era digital dan perkembangan industri logistik yang pesat, kebutuhan akan kemasan...",
-    href: "/post/apa-itu-corrugated-box-kenali-fungsi-dan-jenisnya",
+    href: "/journals/apa-itu-corrugated-box-kenali-fungsi-dan-jenisnya",
     tags: "Artikel",
   },
   {
@@ -14,7 +14,7 @@ export const articles = [
     date: "Jun 3, 2025",
     description:
       "Desain Kemasan Produk Makanan yang Baik dari Pick And Pack Dalam industri makanan dan minuman (F&B), kemasan bukan sekadar pelindung…",
-    href: "/post/desain-kemasan-produk-makanan-yang-baik-dari-pick-and-pack",
+    href: "/journals/desain-kemasan-produk-makanan-yang-baik-dari-pick-and-pack",
     tags: "Artikel",
   },
   {
@@ -23,7 +23,7 @@ export const articles = [
     date: "May 20, 2025",
     description:
       "Mengenal Berbagai Jenis Material untuk Cetak Packaging Di era persaingan produk yang ketat, kemasan tidak hanya berfungsi sebagai pelindung, tetapi…",
-    href: "/post/mengenal-berbagai-jenis-material-untuk-cetak-packaging",
+    href: "/journals/mengenal-berbagai-jenis-material-untuk-cetak-packaging",
   },
   {
     title: "Cara Memilih Desain Kemasan yang Tepat untuk Produk Anda",
@@ -31,7 +31,7 @@ export const articles = [
     date: "Apr 15, 2025",
     description:
       "Cara Memilih Desain Kemasan yang Tepat untuk Produk Anda Desain kemasan adalah elemen penting dalam strategi pemasaran produk. Ini bukan hanya…",
-    href: "/post/cara-memilih-desain-kemasan-yang-tepat-untuk-produk-anda",
+    href: "/journals/cara-memilih-desain-kemasan-yang-tepat-untuk-produk-anda",
   },
   {
     title: "Tips Memilih Desain Kemasan yang Tepat untuk Produk Anda",
@@ -39,6 +39,6 @@ export const articles = [
     date: "Mar 10, 2025",
     description:
       "Tips Memilih Desain Kemasan yang Tepat untuk Produk Anda Desain kemasan adalah elemen penting dalam strategi pemasaran produk. Ini bukan hanya…",
-    href: "/post/tips-memilih-desain-kemasan-yang-tepat-untuk-produk-anda",
+    href: "/journals/tips-memilih-desain-kemasan-yang-tepat-untuk-produk-anda",
   },
 ];
