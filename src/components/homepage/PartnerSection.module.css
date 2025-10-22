@@ -3,6 +3,11 @@
   min-width: max-content;
 }
 
+.marquee:hover,
+.marquee:focus-within {
+  animation-play-state: paused;
+}
+
 @keyframes marquee {
   0% {
     transform: translateX(0%);
