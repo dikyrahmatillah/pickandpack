@@ -49,7 +49,7 @@ export default function TestimonialsSection() {
     >
       <div className="max-w-screen mx-auto px-2 sm:px-4 lg:px-8">
         <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
             TESTIMONIALS
           </h2>
           <p className="text-base text-gray-600 max-w-2xl mx-auto">

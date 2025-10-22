@@ -45,7 +45,7 @@ export default function JournalSection() {
     >
       <div className="max-w-5xl mx-auto px-6 mt-20 sm:px-8 lg:px-10">
         <div className="flex items-start justify-between mb-8">
-          <h2 className="text-2xl md:text-5xl font-bold text-gray-900">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
             JOURNAL
           </h2>
           <Link

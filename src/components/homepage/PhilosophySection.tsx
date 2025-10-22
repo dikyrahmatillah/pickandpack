@@ -42,7 +42,7 @@ export default function PhilosophySection() {
       <div className="max-w-5xl mx-auto px-2 mt-10 sm:px-4 lg:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <motion.div className="space-y-4" variants={cardVariants}>
-            <h2 className="text-2xl md:text-5xl font-bold text-gray-900">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
               PHILOSOPHY
             </h2>
             <Link

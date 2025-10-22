@@ -93,7 +93,7 @@ export default function ProductSection() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.5 }}
         >
-          <h2 className="mb-1 font-bold tracking-tight text-neutral-900 text-xl sm:text-2xl">
+          <h2 className="mb-1 font-bold tracking-tight text-neutral-900 text-2xl md:text-3xl">
             Produk Kami:
           </h2>
           <div className="flex items-center gap-2 mb-6">

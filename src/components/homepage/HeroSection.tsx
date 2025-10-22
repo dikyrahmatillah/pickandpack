@@ -8,6 +8,7 @@ import {
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
+import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import hero_content from "@/data/heroContent";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -42,7 +43,7 @@ export default function HeroSection() {
               transition={{ duration: 0.5, ease: "easeInOut" }}
               className="space-y-4 max-w-xl mx-auto"
             >
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black leading-tight tracking-tight text-neutral-900 drop-shadow-xl">
+              <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl font-black leading-tight tracking-tight text-neutral-900 drop-shadow-xl">
                 {currentContent.title}
                 <br />
                 {currentContent.highlight && (
@@ -59,9 +60,12 @@ export default function HeroSection() {
                 href="https://api.whatsapp.com/send?phone=6285169576390&text=Halo,%20Saya%20tertarik%20untuk%20custom%20packaging.%20bisa%20tolong%20dibantu%20?"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 bg-black text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold text-base md:text-lg transition-all duration-300 hover:bg-gray-800 uppercase tracking-wide"
+                className="inline-flex items-center gap-3 bg-black text-white px-5 py-2.5 md:px-6 md:py-3 rounded-full font-semibold text-sm md:text-base transition-all duration-300 hover:bg-gray-800 uppercase tracking-wide"
               >
-                Konsultasikan Sekarang ✆
+                Konsultasikan Sekarang
+                <span aria-hidden="true">
+                  <FontAwesomeIcon icon={faWhatsapp} className="text-xl" />
+                </span>
               </Link>
             </motion.div>
           </AnimatePresence>

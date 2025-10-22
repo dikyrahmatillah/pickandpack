@@ -41,7 +41,7 @@ export default function FollowUsSection() {
       className="w-full py-6 mt-10 sm:py-10 md:py-14 bg-white pr-0 sm:pr-4 md:pr-10 overflow-x-hidden"
     >
       <div className="flex flex-col items-start w-3/4">
-        <h2 className="text-2xl sm:text-4xl md:text-5xl ml-auto font-extrabold text-gray-900 mb-6 md:mb-8">
+        <h2 className="text-2xl md:text-3xl ml-auto font-extrabold text-gray-900 mb-6 md:mb-8">
           FOLLOW US
         </h2>
         <div className="relative flex items-start w-full">
