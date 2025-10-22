@@ -59,7 +59,7 @@ export default function ProductSection() {
       return (
         <motion.div
           key={`${product.name}-${start}-${i}`}
-          className="flex-col gap-3 h-full"
+          className="flex-col gap-3"
           initial={{ x: 300 }}
           animate={{ x: 0 }}
           transition={{ type: "tween", duration: 0.4, delay: i * 0.1 }}
@@ -70,7 +70,7 @@ export default function ProductSection() {
               alt={product.name}
               width={600}
               height={480}
-              className="object-cover w-full h-full transition-transform duration-1000 ease-out hover:scale-110"
+              className="object-cover w-full h-full transition-transform duration-4000 ease-out hover:scale-110"
               style={{ borderRadius: "inherit" }}
             />
           </div>
@@ -96,7 +96,7 @@ export default function ProductSection() {
           <h2 className="mb-1 font-bold tracking-tight text-neutral-900 text-xl sm:text-2xl">
             Produk Kami:
           </h2>
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-6">
             <span className="text-neutral-500 text-sm underline underline-offset-4">
               Produk baru:
             </span>
@@ -106,15 +106,15 @@ export default function ProductSection() {
           </div>
         </motion.div>
         <div className="flex justify-end w-full">
-          <div className="relative overflow-hidden min-h-[800px] h-[800px]">
-            <div className="flex gap-2 md:gap-4 max-w-full md:max-w-[calc(100vw-6rem)] justify-end h-full">
+          <div className="relative overflow-hidden pb-4">
+            <div className="flex gap-2 md:gap-4 max-w-full md:max-w-[calc(100vw-6rem)] justify-end">
               {renderProductItems()}
             </div>
             <motion.button
               onClick={handleNext}
               aria-label="Next"
               disabled={isTransitioning || products.length === 0}
-              className="absolute right-[-0.1rem] top-1/4 -translate-y-1/2 w-8 h-8 rounded-l-lg bg-white border border-neutral-300 shadow flex items-center justify-center text-xl text-neutral-700 hover:bg-neutral-100 transition-all duration-300 ease-out hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="absolute right-[-0.1rem] top-1/4 -translate-y-1/2 w-8 h-8 rounded-l-lg bg-white border border-neutral-300 shadow flex items-center justify-center text-xl text-neutral-700 hover:bg-neutral-100 transition-all duration-300 ease-out hover:scale-110 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               style={{ boxShadow: "0 2px 8px 0 rgba(0,0,0,0.07)" }}
               whileTap={{ scale: 0.95 }}
             >
