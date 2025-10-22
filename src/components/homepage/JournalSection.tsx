@@ -59,7 +59,7 @@ export default function JournalSection() {
           {journals.map((journal, i) => (
             <motion.div key={i} {...articleMotionProps(i)}>
               <Link
-                href={journal.slug}
+                href={`journals/${journal.slug}`}
                 className="flex items-center py-5 group hover:bg-gray-50 transition-colors"
               >
                 <div className="w-28 text-left text-gray-600 text-sm">
