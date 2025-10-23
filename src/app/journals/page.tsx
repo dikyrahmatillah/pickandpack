@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Journal } from "@/types/journal";
 import JournalList from "./components/JournalList";
-import JournalPagination from "./components/JournalPagination";
+import Pagination from "@/components/Pagination";
 
 const PAGE_SIZE = 6;
 
@@ -151,11 +151,7 @@ export default function JournalPage() {
         {!loading && !error && (
           <>
             <JournalList journals={journals} />
-            <JournalPagination
-              page={page}
-              totalPages={totalPages}
-              setPage={setPage}
-            />
+            <Pagination totalPages={totalPages} page={page} setPage={setPage} />
           </>
         )}
       </motion.section>

@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import CategoryFilter from "./components/CategoryFilter";
 import SortOptions from "./components/SortOptions";
 import ProductGrid from "./components/ProductGrid";
-import Pagination from "./components/Pagination";
+import Pagination from "@/components/Pagination";
 
 const sidebar = ["Semua Produk", "Makanan", "Minuman", "Pengiriman"];
 const sortOptions = [
