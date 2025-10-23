@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { fetchUrl } from "@/utils/fetchUrl";
@@ -114,7 +116,7 @@ export default async function JournalDetailPage({
   };
 
   return (
-    <main className="max-w-6xl mx-auto px-4 sm:px-8 md:px-28 py-8 pt-10 md:pt-30">
+    <main className="px-4 sm:px-8 md:px-28 py-8 pt-10 md:pt-30">
       <nav className="mb-8 text-gray-500 text-sm">
         <Link href="/" className="hover:underline">
           Home
@@ -129,9 +131,9 @@ export default async function JournalDetailPage({
         </span>
       </nav>
 
-      <article className="w-full bg-white rounded-2xl overflow-hidden shadow-lg">
+      <article className="w-full overflow-hidden">
         {/* Featured Image */}
-        <div className="relative w-full h-[300px] md:h-[400px]">
+        <div className="relative w-full h-[300px] md:h-[400px] rounded-2xl overflow-hidden">
           <Image
             src={journalDetail.coverImage}
             alt={journalDetail.title}
@@ -149,7 +151,7 @@ export default async function JournalDetailPage({
         </div>
 
         {/* Article Metadata */}
-        <div className="px-6 md:px-10 py-6 border-b flex items-center gap-4">
+        <div className="py-6 border-b flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center text-white text-xl font-bold">
             {journalDetail.createdBy?.charAt(0) ?? "?"}
           </div>
@@ -180,7 +182,7 @@ export default async function JournalDetailPage({
         </div>
 
         {/* Article Content */}
-        <div className="w-full px-6 md:px-10 py-8">
+        <div className="w-full  py-8">
           <div
             className="w-full text-gray-900 leading-relaxed
               [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:break-words [&_h1]:hyphens-auto [&_h1]:max-w-full
@@ -215,21 +217,11 @@ export default async function JournalDetailPage({
           {/* Navigation */}
           <div className="mt-10 pt-6 border-t">
             <Link
+              data-cursor="white"
               href="/journals"
               className="inline-flex items-center bg-gray-900 text-white px-6 py-3 rounded-md font-medium hover:bg-gray-800 transition"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-2"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <FontAwesomeIcon icon={faChevronLeft} className="h-5 w-5 mr-2" />
               Kembali ke Daftar Journal
             </Link>
           </div>
