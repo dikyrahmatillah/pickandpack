@@ -3,6 +3,11 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 
 const containerVariants = {
   hidden: { opacity: 0, y: 40 },
@@ -25,6 +30,17 @@ export default function ProductGallery({
   name: string;
 }) {
   const [selected, setSelected] = useState(0);
+  const hasMultipleImages = images.length > 1;
+
+  const handlePrev = () => {
+    if (!hasMultipleImages) return;
+    setSelected((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const handleNext = () => {
+    if (!hasMultipleImages) return;
+    setSelected((prev) => (prev + 1) % images.length);
+  };
 
   return (
     <motion.div
@@ -76,6 +92,36 @@ export default function ProductGallery({
             </motion.div>
           )}
         </AnimatePresence>
+        {hasMultipleImages && (
+          <>
+            <button
+              type="button"
+              onClick={handlePrev}
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-xl bg-white/80 hover:bg-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-black p-2"
+              aria-label="Show previous image"
+            >
+              <FontAwesomeIcon
+                icon={faChevronLeft}
+                width={20}
+                height={20}
+                aria-hidden="true"
+              />
+            </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl bg-white/80 hover:bg-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-black p-2"
+              aria-label="Show next image"
+            >
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                width={20}
+                height={20}
+                aria-hidden="true"
+              />
+            </button>
+          </>
+        )}
       </motion.div>
     </motion.div>
   );
