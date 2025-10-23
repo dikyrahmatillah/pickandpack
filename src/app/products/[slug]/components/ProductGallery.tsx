@@ -97,7 +97,7 @@ export default function ProductGallery({
             <button
               type="button"
               onClick={handlePrev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-xl bg-white/80 hover:bg-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-black p-2"
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-xl bg-white/80 hover:bg-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-black p-2 cursor-pointer"
               aria-label="Show previous image"
             >
               <FontAwesomeIcon
@@ -110,7 +110,7 @@ export default function ProductGallery({
             <button
               type="button"
               onClick={handleNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl bg-white/80 hover:bg-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-black p-2"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl bg-white/80 hover:bg-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-black p-2 cursor-pointer"
               aria-label="Show next image"
             >
               <FontAwesomeIcon

@@ -49,15 +49,21 @@ export default function JournalPage() {
     fetchJournals();
   }, [authorFilter, page]);
 
-  // Reset to page 1 when filter changes
   useEffect(() => {
     setPage(1);
   }, [authorFilter]);
 
-  const authors = [
-    "All",
-    ...Array.from(new Set(journals.map((j) => j.createdBy))),
-  ];
+  const rawAuthors = journals
+    .map((j) => j.createdBy)
+    .filter(Boolean) as string[];
+  const seen = new Map<string, string>();
+  for (const a of rawAuthors) {
+    const key = a.toLowerCase();
+    if (key === "admin" || key === "editor") continue;
+    if (!seen.has(key)) seen.set(key, a);
+  }
+
+  const authors = ["All", "Admin", "Editor", ...Array.from(seen.values())];
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
@@ -112,7 +118,7 @@ export default function JournalPage() {
               id="author"
               value={authorFilter}
               onChange={(e) => setAuthorFilter(e.target.value)}
-              className="border rounded px-2 py-1 text-sm"
+              className="border rounded px-2 py-1 text-sm cursor-pointer"
             >
               {authors.map((a, idx) => (
                 <option key={`${a}-${idx}`} value={a}>
