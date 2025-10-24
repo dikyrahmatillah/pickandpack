@@ -138,14 +138,28 @@ export default function ProductsPage() {
         </motion.aside>
 
         {loading ? (
-          <motion.div
-            className="w-full flex items-center justify-center"
-            variants={itemVariants}
-          >
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900">
-              <span className="sr-only">Loading...</span>
+          <motion.section className="flex-1" variants={containerVariants}>
+            <div className="grid grid-cols-2 xl:grid-cols-4 gap-x-2 gap-y-8">
+              {Array.from({ length: pageSize }).map((_, idx) => {
+                const roundedClass =
+                  idx % 2 === 0 ? "rounded-none" : "rounded-[20%]";
+                return (
+                  <motion.div
+                    key={idx}
+                    className="max-w-full w-full mx-auto"
+                    variants={itemVariants}
+                  >
+                    <div
+                      className={`aspect-square w-full mb-4 relative ${roundedClass} shimmer`}
+                    />
+
+                    <div className="h-4 rounded w-3/4 mb-2 shimmer" />
+                    <div className="h-3 rounded w-1/2 shimmer mt-1" />
+                  </motion.div>
+                );
+              })}
             </div>
-          </motion.div>
+          </motion.section>
         ) : (
           <motion.section className="flex-1" variants={containerVariants}>
             <ProductGrid products={products} />
