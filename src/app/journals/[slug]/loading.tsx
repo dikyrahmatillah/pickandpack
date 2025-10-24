@@ -54,7 +54,7 @@ export default function Loading() {
         </div>
       </motion.div>
 
-      <motion.div className="w-full py-8" variants={containerVariants}>
+      <motion.div className="w-full py-8" variants={itemVariants}>
         <motion.div className="space-y-3" variants={itemVariants}>
           <div className="h-4 bg-gray-200 rounded w-full animate-pulse" />
           <div className="h-4 bg-gray-200 rounded w-11/12 animate-pulse" />
