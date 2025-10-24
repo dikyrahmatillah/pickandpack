@@ -61,34 +61,22 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">HELP</h3>
             <ul className="space-y-2">
               <li>
-                <span
-                  className="text-gray-800 transition-colors cursor-not-allowed opacity-80"
-                  aria-disabled="true"
-                >
+                <span className="text-gray-800 transition-colors cursor-not-allowed opacity-80">
                   delivery
                 </span>
               </li>
               <li>
-                <span
-                  className="text-gray-800 transition-colors cursor-not-allowed opacity-80"
-                  aria-disabled="true"
-                >
+                <span className="text-gray-800 transition-colors cursor-not-allowed opacity-80">
                   returns and exchanges
                 </span>
               </li>
               <li>
-                <span
-                  className="text-gray-800 transition-colors cursor-not-allowed opacity-80"
-                  aria-disabled="true"
-                >
+                <span className="text-gray-800 transition-colors cursor-not-allowed opacity-80">
                   terms and conditions
                 </span>
               </li>
               <li>
-                <span
-                  className="text-gray-800 transition-colors cursor-not-allowed opacity-80"
-                  aria-disabled="true"
-                >
+                <span className="text-gray-800 transition-colors cursor-not-allowed opacity-80">
                   privacy policy
                 </span>
               </li>
@@ -114,10 +102,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <span
-                  className="text-gray-800 transition-colors cursor-not-allowed opacity-80"
-                  aria-disabled="true"
-                >
+                <span className="text-gray-800 transition-colors cursor-not-allowed opacity-80">
                   contacts
                 </span>
               </li>
@@ -157,10 +142,7 @@ export default function Footer() {
             <p className="text-xs text-gray-400 mt-2">
               You can safely unsubscribe anytime from any email footer. Here is
               our{" "}
-              <span
-                className="text-green-400 cursor-not-allowed opacity-80"
-                aria-disabled="true"
-              >
+              <span className="text-green-400 cursor-not-allowed opacity-80">
                 privacy policy
               </span>
             </p>
@@ -178,10 +160,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <h3 className="text-lg font-semibold mb-2">FOLLOW US</h3>
-              <motion.span
-                className="text-gray-800 cursor-not-allowed opacity-80"
-                aria-disabled="true"
-              >
+              <motion.span className="text-gray-800 cursor-not-allowed opacity-80">
                 @pickandpack_id
               </motion.span>
             </div>
