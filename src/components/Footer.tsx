@@ -41,23 +41,10 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/top-sales"
+                  href="/journals"
                   className="text-gray-800 transition-colors"
                 >
-                  top sales
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/premium-tea"
-                  className="text-gray-800 transition-colors"
-                >
-                  premium tea
-                </Link>
-              </li>
-              <li>
-                <Link href="/set" className="text-gray-800 transition-colors">
-                  set
+                  journals
                 </Link>
               </li>
             </ul>
@@ -74,36 +61,24 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">HELP</h3>
             <ul className="space-y-2">
               <li>
-                <Link
-                  href="/delivery"
-                  className="text-gray-800 transition-colors"
-                >
+                <span className="text-gray-800 transition-colors cursor-not-allowed opacity-80">
                   delivery
-                </Link>
+                </span>
               </li>
               <li>
-                <Link
-                  href="/returns-exchanges"
-                  className="text-gray-800 transition-colors"
-                >
+                <span className="text-gray-800 transition-colors cursor-not-allowed opacity-80">
                   returns and exchanges
-                </Link>
+                </span>
               </li>
               <li>
-                <Link
-                  href="/terms-and-conditions"
-                  className="text-gray-800 transition-colors"
-                >
+                <span className="text-gray-800 transition-colors cursor-not-allowed opacity-80">
                   terms and conditions
-                </Link>
+                </span>
               </li>
               <li>
-                <Link
-                  href="/privacy-policy"
-                  className="text-gray-800 transition-colors"
-                >
+                <span className="text-gray-800 transition-colors cursor-not-allowed opacity-80">
                   privacy policy
-                </Link>
+                </span>
               </li>
             </ul>
           </motion.div>
@@ -127,19 +102,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/contacts"
-                  className="text-gray-800 transition-colors"
-                >
+                <span className="text-gray-800 transition-colors cursor-not-allowed opacity-80">
                   contacts
-                </Link>
+                </span>
               </li>
               <li>
-                <Link
-                  href="/journal"
-                  className="text-gray-800 transition-colors"
-                >
-                  journal
+                <Link href="/team" className="text-gray-800 transition-colors">
+                  team
                 </Link>
               </li>
             </ul>
@@ -173,12 +142,9 @@ export default function Footer() {
             <p className="text-xs text-gray-400 mt-2">
               You can safely unsubscribe anytime from any email footer. Here is
               our{" "}
-              <Link
-                href="/privacy-policy"
-                className="text-green-400 hover:text-green-300"
-              >
+              <span className="text-green-400 cursor-not-allowed opacity-80">
                 privacy policy
-              </Link>
+              </span>
             </p>
           </motion.div>
         </motion.div>
@@ -194,16 +160,9 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <h3 className="text-lg font-semibold mb-2">FOLLOW US</h3>
-              <motion.a
-                href="https://www.instagram.com/pickandpack_id/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-800 transition-colors"
-                whileHover={{ scale: 1.08, color: "#22c55e" }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
+              <motion.span className="text-gray-800 cursor-not-allowed opacity-80">
                 @pickandpack_id
-              </motion.a>
+              </motion.span>
             </div>
             <div className="text-center text-gray-400 text-sm">
               © {new Date().getFullYear()} Pick & Pack. All rights reserved.
