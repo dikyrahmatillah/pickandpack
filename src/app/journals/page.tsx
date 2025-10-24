@@ -101,7 +101,6 @@ export default function JournalPage() {
           >
             JOURNAL
           </motion.h1>
-          {/* Filtering */}
           <motion.div
             className="flex gap-2"
             initial={{ opacity: 0, y: -10 }}
@@ -131,11 +130,34 @@ export default function JournalPage() {
 
         {loading && (
           <motion.div
-            className="text-center text-gray-500 py-12"
+            className="py-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            Loading journals...
+            <div className="flex flex-col gap-8">
+              {Array.from({ length: PAGE_SIZE }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="flex flex-col md:flex-row items-start gap-6 border-b pb-8 bg-white rounded-xl shadow-md p-6 animate-pulse"
+                  aria-hidden
+                >
+                  <div className="w-full md:w-56 flex-shrink-0 rounded-xl overflow-hidden bg-gray-200 h-40 md:h-36" />
+                  <div className="flex-1">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                      <div className="h-3 bg-gray-200 rounded w-32" />
+                      <div className="hidden sm:block h-3 bg-gray-200 rounded w-2 mx-2 opacity-0">
+                        |
+                      </div>
+                      <div className="h-3 bg-gray-200 rounded w-24" />
+                    </div>
+                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-2" />
+                    <div className="h-4 bg-gray-200 rounded w-full mb-2" />
+                    <div className="h-4 bg-gray-200 rounded w-2/3 mb-3" />
+                    <div className="h-4 bg-gray-200 rounded w-28" />
+                  </div>
+                </div>
+              ))}
+            </div>
           </motion.div>
         )}
         {error && (
